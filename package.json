@@ -1,0 +1,24 @@
+{
+  "name": "document-tracker-system",
+  "version": "1.0.0",
+  "description": "Document Tracker System - A web-based application for organizing, monitoring, and managing documents",
+  "main": "index.js",
+  "scripts": {
+    "start": "node backend/src/server.js",
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "cd backend && npm run dev",
+    "client:dev": "cd frontend && npm start",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "echo 'Backend is Node.js - no build needed'",
+    "test": "echo 'Test suite not yet configured'"
+  },
+  "keywords": [
+    "document-tracking",
+    "status-management",
+    "reminders",
+    "ai-summaries"
+  ],
+  "author": "",
+  "license": "MIT"
+}
