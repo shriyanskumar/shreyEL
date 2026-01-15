@@ -42,6 +42,7 @@ exports.generateSummary = async (req, res) => {
     }
 
     logger.info(`Generating summary for document: ${documentId}`);
+    logger.info(`Document fileUrl: ${document.fileUrl || 'NOT SET'}`);
 
     // Build content from available document fields
     const contentParts = [];
@@ -50,6 +51,8 @@ exports.generateSummary = async (req, res) => {
       contentParts.push(`Description: ${document.description}`);
 
     const content = contentParts.join("\n") || "Document uploaded for tracking";
+
+    logger.info(`Sending to AI - content length: ${content.length}, fileUrl: ${document.fileUrl || 'none'}`);
 
     // Call AI service to generate summary (send fileUrl for document parsing)
     const aiResult = await AIService.generateSummary(
