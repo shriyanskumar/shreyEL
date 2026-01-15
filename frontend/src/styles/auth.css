@@ -108,33 +108,33 @@
 
 .form-group input {
   padding: 12px 16px;
-  border: 2px solid var(--border-color);
+  border: 2px solid #cccccc;
   border-radius: 6px;
   font-size: 14px;
   font-family: inherit;
   transition: all 0.3s ease;
-  background-color: #1a1f3a !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
+  background-color: #f5f5f5 !important;
+  color: #333333 !important;
+  -webkit-text-fill-color: #333333 !important;
 }
 
 .form-group input::placeholder {
-  color: #aaaaaa !important;
-  -webkit-text-fill-color: #aaaaaa !important;
+  color: #888888 !important;
+  -webkit-text-fill-color: #888888 !important;
 }
 
 .form-group input::selection {
-  background-color: #4a5568;
+  background-color: #4a90d9;
   color: #ffffff;
 }
 
 .form-group input:focus {
   outline: none;
   border-color: #4a90d9;
-  background-color: #1a1f3a !important;
+  background-color: #ffffff !important;
   box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.3);
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
+  color: #333333 !important;
+  -webkit-text-fill-color: #333333 !important;
 }
 
 /* Override autofill styles */
@@ -142,13 +142,13 @@
 .form-group input:-webkit-autofill:hover,
 .form-group input:-webkit-autofill:focus,
 .form-group input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #1a1f3a inset !important;
-  -webkit-text-fill-color: #ffffff !important;
-  caret-color: #ffffff !important;
+  -webkit-box-shadow: 0 0 0 30px #f5f5f5 inset !important;
+  -webkit-text-fill-color: #333333 !important;
+  caret-color: #333333 !important;
 }
 
 .form-group input:disabled {
-  background-color: #2d3748 !important;
+  background-color: #e0e0e0 !important;
   cursor: not-allowed;
   opacity: 0.6;
 }
