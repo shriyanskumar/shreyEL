@@ -36,18 +36,19 @@ class AIService {
       );
 
       logger.info("AI summary generated successfully");
+      logger.info("AI module response:", response.data);
       return response.data;
     } catch (error) {
-      logger.error("AI Service - Generate Summary Error:", error.message);
+      logger.error("AI Service - Generate Summary Error:", error);
       if (error.response) {
-        logger.error(
-          "AI Service Response Error:",
-          error.response.status,
-          error.response.data
-        );
+        logger.error("AI Service Response Error Status:", error.response.status);
+        logger.error("AI Service Response Error Data:", error.response.data);
+      } else {
+        logger.error("AI Service Error - No response received:", error.request || error.message);
       }
 
       // Return fallback if AI service fails
+      logger.warn("Returning fallback summary for category:", category);
       return {
         summary: `This ${category} document has been uploaded for tracking.`,
         key_points: [
