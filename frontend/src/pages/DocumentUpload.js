@@ -148,17 +148,24 @@ const DocumentUpload = () => {
           fileUrl = cloudinaryResult.secure_url;
           console.log("File uploaded to Cloudinary:", fileUrl);
         } else {
-          console.warn("Cloudinary upload failed, using filename only");
+          const errorText = await cloudinaryResponse.text();
+          console.error(
+            "Cloudinary upload failed:",
+            cloudinaryResponse.status,
+            errorText
+          );
           fileUrl = formData.file?.name || "";
         }
         setUploadProgress(50);
       }
 
+      console.log("Final fileUrl before sending:", fileUrl);
+
       const payload = {
         title: formData.title,
         description: formData.description,
         expiryDate: formData.expiryDate || undefined,
-        fileUrl: fileUrl || formData.file?.name || `documents/${Date.now()}`,
+        fileUrl: fileUrl,
       };
       if (formData.categoryId) payload.categoryId = formData.categoryId;
       else payload.category = formData.category;
