@@ -85,6 +85,27 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// Debug endpoint to check document fileUrl
+app.get("/api/debug/document/:id", async (req, res) => {
+  try {
+    const Document = require("./models/Document");
+    const doc = await Document.findById(req.params.id);
+    if (!doc) {
+      return res.status(404).json({ error: "Document not found" });
+    }
+    res.json({
+      id: doc._id,
+      title: doc.title,
+      fileUrl: doc.fileUrl || "NOT SET",
+      hasFileUrl: !!doc.fileUrl,
+      fileUrlType: typeof doc.fileUrl,
+      allFields: Object.keys(doc.toObject())
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // 404 Handler
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
