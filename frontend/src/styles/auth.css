@@ -105,12 +105,14 @@
   font-size: 14px;
   font-family: inherit;
   transition: all 0.3s ease;
-  background-color: #1a1f3a;
-  color: #ffffff;
+  background-color: #1a1f3a !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 .form-group input::placeholder {
-  color: #aaaaaa;
+  color: #aaaaaa !important;
+  -webkit-text-fill-color: #aaaaaa !important;
 }
 
 .form-group input::selection {
@@ -120,13 +122,25 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--primary-blue);
-  background-color: var(--text-white);
-  box-shadow: 0 0 0 3px rgba(26, 31, 58, 0.1);
+  border-color: #4a90d9;
+  background-color: #1a1f3a !important;
+  box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.3);
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Override autofill styles */
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover,
+.form-group input:-webkit-autofill:focus,
+.form-group input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #1a1f3a inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
 }
 
 .form-group input:disabled {
-  background-color: #f0f0f0;
+  background-color: #2d3748 !important;
   cursor: not-allowed;
   opacity: 0.6;
 }
