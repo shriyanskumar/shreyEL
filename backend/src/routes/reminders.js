@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const Reminder = require("../models/Reminder");
-const auth = require("../middleware/auth");
+const { protect } = require("../middleware/auth");
 
 // All reminder routes require authentication
-router.use(auth);
+router.use(protect);
 
 /**
  * Get reminders for the authenticated user only
