@@ -132,11 +132,11 @@ const DocumentUpload = () => {
         setUploadProgress(10);
         const cloudinaryData = new FormData();
         cloudinaryData.append("file", formData.file);
-        cloudinaryData.append("upload_preset", "doc_tracker"); // Create this preset in Cloudinary
-        cloudinaryData.append("cloud_name", "democloud"); // Replace with your cloud name
+        cloudinaryData.append("upload_preset", "doc_tracker");
+        cloudinaryData.append("cloud_name", "dkbwv0adj");
 
         const cloudinaryResponse = await fetch(
-          "https://api.cloudinary.com/v1_1/democloud/auto/upload", // Replace democloud
+          "https://api.cloudinary.com/v1_1/dkbwv0adj/auto/upload",
           {
             method: "POST",
             body: cloudinaryData,
