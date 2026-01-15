@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
-import '../styles/dashboard.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import api from "../utils/api";
+import "../styles/dashboard.css";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -11,22 +11,22 @@ const Dashboard = () => {
   const [stats, setStats] = useState({
     totalDocuments: 0,
     pendingSummaries: 0,
-    upcomingReminders: 0
+    upcomingReminders: 0,
   });
 
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [recentDocs, setRecentDocs] = useState([]);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/documents');
+        const res = await api.get("/api/documents");
         const documents = res.data.documents || [];
 
         const totalDocs = documents.length;
-        const pendingSums = documents.filter(d => !d.summary).length;
+        const pendingSums = documents.filter((d) => !d.summary).length;
 
-        const upcomingRems = documents.filter(d => {
+        const upcomingRems = documents.filter((d) => {
           if (!d.expiryDate) return false;
           const exp = new Date(d.expiryDate);
           const limit = new Date();
@@ -37,15 +37,19 @@ const Dashboard = () => {
         setStats({
           totalDocuments: totalDocs,
           pendingSummaries: pendingSums,
-          upcomingReminders: upcomingRems
+          upcomingReminders: upcomingRems,
         });
 
         const sorted = [...documents]
-          .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))
+          .sort(
+            (a, b) =>
+              new Date(b.updatedAt || b.createdAt) -
+              new Date(a.updatedAt || a.createdAt)
+          )
           .slice(0, 4);
         setRecentDocs(sorted);
       } catch (err) {
-        setError('Failed to load statistics');
+        setError("Failed to load statistics");
       }
     };
 
@@ -72,7 +76,12 @@ const Dashboard = () => {
             <span className="stat-label">Total Documents</span>
             <span className="stat-value">{stats.totalDocuments}</span>
           </div>
-          <button onClick={() => navigate('/documents')} className="stat-action">→</button>
+          <button
+            onClick={() => navigate("/documents")}
+            className="stat-action"
+          >
+            →
+          </button>
         </div>
 
         <div className="stat-card glass-card">
@@ -81,7 +90,12 @@ const Dashboard = () => {
             <span className="stat-label">Pending Summaries</span>
             <span className="stat-value">{stats.pendingSummaries}</span>
           </div>
-          <button onClick={() => navigate('/documents')} className="stat-action">→</button>
+          <button
+            onClick={() => navigate("/documents")}
+            className="stat-action"
+          >
+            →
+          </button>
         </div>
 
         <div className="stat-card glass-card">
@@ -90,7 +104,12 @@ const Dashboard = () => {
             <span className="stat-label">Upcoming Reminders</span>
             <span className="stat-value">{stats.upcomingReminders}</span>
           </div>
-          <button onClick={() => navigate('/reminders')} className="stat-action">→</button>
+          <button
+            onClick={() => navigate("/reminders")}
+            className="stat-action"
+          >
+            →
+          </button>
         </div>
       </div>
 
@@ -100,13 +119,16 @@ const Dashboard = () => {
         {recentDocs.length === 0 ? (
           <div className="empty-recent">
             <p>No documents yet. Start by uploading your first document!</p>
-            <button onClick={() => navigate('/upload')} className="btn btn-primary">
+            <button
+              onClick={() => navigate("/upload")}
+              className="btn btn-primary"
+            >
               ↑ Upload Document
             </button>
           </div>
         ) : (
           <div className="recent-list glass-card">
-            {recentDocs.map(doc => (
+            {recentDocs.map((doc) => (
               <div
                 key={doc._id}
                 className="recent-item"
@@ -131,19 +153,28 @@ const Dashboard = () => {
       <div className="quick-actions">
         <h2>Quick Actions</h2>
         <div className="actions-grid">
-          <button onClick={() => navigate('/documents')} className="action-card glass-card">
+          <button
+            onClick={() => navigate("/documents")}
+            className="action-card glass-card"
+          >
             <div className="action-icon-wrapper">
               <span className="action-icon">≡</span>
             </div>
             <span className="action-label">View All Documents</span>
           </button>
-          <button onClick={() => navigate('/upload')} className="action-card glass-card">
+          <button
+            onClick={() => navigate("/upload")}
+            className="action-card glass-card"
+          >
             <div className="action-icon-wrapper">
               <span className="action-icon">↑</span>
             </div>
             <span className="action-label">Upload Document</span>
           </button>
-          <button onClick={() => navigate('/reminders')} className="action-card glass-card">
+          <button
+            onClick={() => navigate("/reminders")}
+            className="action-card glass-card"
+          >
             <div className="action-icon-wrapper">
               <span className="action-icon">⏱</span>
             </div>

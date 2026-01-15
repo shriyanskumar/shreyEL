@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '../styles/reminders.css';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import "../styles/reminders.css";
 
 const Reminders = () => {
   const navigate = useNavigate();
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchReminders = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/reminders');
+        const res = await api.get("/api/reminders");
         setReminders(res.data.reminders || []);
       } catch (err) {
         console.error(err);
-        setError('Failed to load reminders');
+        setError("Failed to load reminders");
       } finally {
         setLoading(false);
       }
@@ -26,13 +26,13 @@ const Reminders = () => {
   }, []);
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'No date';
+    if (!dateString) return "No date";
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -46,10 +46,10 @@ const Reminders = () => {
   };
 
   const getUrgencyClass = (daysUntil) => {
-    if (daysUntil < 0) return 'overdue';
-    if (daysUntil <= 7) return 'urgent';
-    if (daysUntil <= 30) return 'soon';
-    return 'normal';
+    if (daysUntil < 0) return "overdue";
+    if (daysUntil <= 7) return "urgent";
+    if (daysUntil <= 30) return "soon";
+    return "normal";
   };
 
   if (loading) {
@@ -68,8 +68,8 @@ const Reminders = () => {
       </div>
 
       <div className="reminders-actions">
-        <button 
-          onClick={() => navigate('/documents')} 
+        <button
+          onClick={() => navigate("/documents")}
           className="btn btn-primary"
         >
           ▦ View All Documents
@@ -82,22 +82,31 @@ const Reminders = () => {
         <div className="empty-state">
           <div className="empty-icon">◻</div>
           <h2>No reminders yet</h2>
-          <p>You don't have any reminders set up. Upload documents with expiry dates to get automatic reminders.</p>
-          <button onClick={() => navigate('/upload')} className="btn btn-primary">
+          <p>
+            You don't have any reminders set up. Upload documents with expiry
+            dates to get automatic reminders.
+          </p>
+          <button
+            onClick={() => navigate("/upload")}
+            className="btn btn-primary"
+          >
             ↑ Upload Document
           </button>
         </div>
       ) : (
         <div className="reminders-grid">
-          {reminders.map(reminder => {
+          {reminders.map((reminder) => {
             const daysUntil = getDaysUntil(reminder.reminderDate);
             const urgencyClass = getUrgencyClass(daysUntil);
-            
+
             return (
-              <div 
-                key={reminder._id} 
+              <div
+                key={reminder._id}
                 className={`reminder-card ${urgencyClass}`}
-                onClick={() => reminder.document?._id && navigate(`/documents/${reminder.document._id}`)}
+                onClick={() =>
+                  reminder.document?._id &&
+                  navigate(`/documents/${reminder.document._id}`)
+                }
               >
                 <div className="reminder-status-indicator">
                   {reminder.read ? (
@@ -109,9 +118,9 @@ const Reminders = () => {
 
                 <div className="reminder-content">
                   <h3 className="reminder-doc-title">
-                    ◻ {reminder.document?.title || 'Unknown Document'}
+                    ◻ {reminder.document?.title || "Unknown Document"}
                   </h3>
-                  
+
                   <div className="reminder-date-section">
                     <span className="reminder-date-label">Reminder Date:</span>
                     <span className="reminder-date-value">
@@ -125,12 +134,11 @@ const Reminders = () => {
                         ⚠ {Math.abs(daysUntil)} days overdue
                       </span>
                     ) : daysUntil === 0 ? (
-                      <span className="countdown-text today">
-                        ⊕ Due today!
-                      </span>
+                      <span className="countdown-text today">⊕ Due today!</span>
                     ) : (
                       <span className={`countdown-text ${urgencyClass}`}>
-                        ⏱ {daysUntil} {daysUntil === 1 ? 'day' : 'days'} remaining
+                        ⏱ {daysUntil} {daysUntil === 1 ? "day" : "days"}{" "}
+                        remaining
                       </span>
                     )}
                   </div>
@@ -145,9 +153,7 @@ const Reminders = () => {
                 </div>
 
                 <div className="reminder-action">
-                  <button className="view-doc-btn">
-                    View Document →
-                  </button>
+                  <button className="view-doc-btn">View Document →</button>
                 </div>
               </div>
             );

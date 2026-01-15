@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '../styles/document-detail.css';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import "../styles/document-detail.css";
 
 const DocumentDetail = () => {
   const { id } = useParams();
@@ -11,8 +11,8 @@ const DocumentDetail = () => {
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [generatingSummary, setGeneratingSummary] = useState(false);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     fetchDocument();
@@ -21,21 +21,19 @@ const DocumentDetail = () => {
   const fetchDocument = async () => {
     try {
       setLoading(true);
-      setError('');
+      setError("");
 
-      const docResponse = await axios.get(`http://localhost:5000/api/documents/${id}`);
+      const docResponse = await api.get(`/api/documents/${id}`);
       setDocument(docResponse.data);
 
       try {
-        const summaryResponse = await axios.get(
-          `http://localhost:5000/api/documents/${id}/summary`
-        );
+        const summaryResponse = await api.get(`/api/documents/${id}/summary`);
         setSummary(summaryResponse.data);
       } catch (err) {
         setSummary(null);
       }
     } catch (err) {
-      setError('Failed to load document');
+      setError("Failed to load document");
       console.error(err);
     } finally {
       setLoading(false);
@@ -45,19 +43,19 @@ const DocumentDetail = () => {
   const handleGenerateSummary = async () => {
     try {
       setGeneratingSummary(true);
-      setError('');
+      setError("");
 
-      await axios.post('http://localhost:5000/api/summaries/generate', {
-        documentId: id
+      await api.post("/api/summaries/generate", {
+        documentId: id,
       });
 
-      setSuccessMessage('Summary generated successfully!');
+      setSuccessMessage("Summary generated successfully!");
       setTimeout(() => {
         fetchDocument();
-        setSuccessMessage('');
+        setSuccessMessage("");
       }, 1500);
     } catch (err) {
-      setError('Failed to generate summary');
+      setError("Failed to generate summary");
       console.error(err);
     } finally {
       setGeneratingSummary(false);
@@ -65,54 +63,54 @@ const DocumentDetail = () => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this document?')) {
+    if (!window.confirm("Are you sure you want to delete this document?")) {
       return;
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/documents/${id}`);
-      setSuccessMessage('Document deleted successfully');
+      await api.delete(`/api/documents/${id}`);
+      setSuccessMessage("Document deleted successfully");
       setTimeout(() => {
-        navigate('/documents');
+        navigate("/documents");
       }, 1500);
     } catch (err) {
-      setError('Failed to delete document');
+      setError("Failed to delete document");
       console.error(err);
     }
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'N/A';
+    if (!dateString) return "N/A";
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'N/A';
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    if (isNaN(date.getTime())) return "N/A";
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const getStatusColor = (status) => {
     const colors = {
-      'submitted': '#2196f3',
-      'in-progress': '#ff9800',
-      'approved': '#4caf50',
-      'expiring': '#ff9800',
-      'expired': '#f44336'
+      submitted: "#2196f3",
+      "in-progress": "#ff9800",
+      approved: "#4caf50",
+      expiring: "#ff9800",
+      expired: "#f44336",
     };
-    return colors[status] || '#666';
+    return colors[status] || "#666";
   };
 
   const getImportanceColor = (importance) => {
     const colors = {
-      'low': '#4caf50',
-      'medium': '#ff9800',
-      'high': '#f44336',
-      'critical': '#8b0000'
+      low: "#4caf50",
+      medium: "#ff9800",
+      high: "#f44336",
+      critical: "#8b0000",
     };
-    return colors[importance] || '#666';
+    return colors[importance] || "#666";
   };
 
   if (loading) {
@@ -128,7 +126,10 @@ const DocumentDetail = () => {
       <div className="detail-container">
         <div className="error-page">
           <h2>Document not found</h2>
-          <button onClick={() => navigate('/documents')} className="btn btn-primary">
+          <button
+            onClick={() => navigate("/documents")}
+            className="btn btn-primary"
+          >
             ← Back to Documents
           </button>
         </div>
@@ -136,8 +137,10 @@ const DocumentDetail = () => {
     );
   }
 
-  const isExpired = document.expiryDate && new Date(document.expiryDate) < new Date();
-  const isExpiring = document.expiryDate &&
+  const isExpired =
+    document.expiryDate && new Date(document.expiryDate) < new Date();
+  const isExpiring =
+    document.expiryDate &&
     new Date(document.expiryDate) > new Date() &&
     (new Date(document.expiryDate) - new Date()) / (1000 * 60 * 60 * 24) <= 30;
 
@@ -146,7 +149,9 @@ const DocumentDetail = () => {
       {/* Header */}
       <div className="detail-header">
         <div className="detail-header-left">
-          <button onClick={() => navigate('/documents')} className="back-btn">← Back</button>
+          <button onClick={() => navigate("/documents")} className="back-btn">
+            ← Back
+          </button>
           <div>
             <h1>{document.title}</h1>
             <p className="breadcrumb">Documents / {document.title}</p>
@@ -155,7 +160,9 @@ const DocumentDetail = () => {
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
-      {successMessage && <div className="alert alert-success">{successMessage}</div>}
+      {successMessage && (
+        <div className="alert alert-success">{successMessage}</div>
+      )}
 
       <div className="detail-grid">
         {/* Main Content */}
@@ -190,10 +197,18 @@ const DocumentDetail = () => {
               {document.expiryDate && (
                 <div className="info-item">
                   <label>Expiry Date</label>
-                  <p className={isExpired ? 'text-expired' : isExpiring ? 'text-expiring' : ''}>
+                  <p
+                    className={
+                      isExpired
+                        ? "text-expired"
+                        : isExpiring
+                        ? "text-expiring"
+                        : ""
+                    }
+                  >
                     {formatDate(document.expiryDate)}
-                    {isExpired && ' (Expired)'}
-                    {isExpiring && ' (Expiring Soon)'}
+                    {isExpired && " (Expired)"}
+                    {isExpiring && " (Expiring Soon)"}
                   </p>
                 </div>
               )}
@@ -217,7 +232,9 @@ const DocumentDetail = () => {
                   disabled={generatingSummary}
                   className="btn btn-primary"
                 >
-                  {generatingSummary ? '⏳ Generating...' : '✨ Generate Summary'}
+                  {generatingSummary
+                    ? "⏳ Generating..."
+                    : "✨ Generate Summary"}
                 </button>
               )}
             </div>
@@ -231,10 +248,21 @@ const DocumentDetail = () => {
                     <div className="score-bar">
                       <div
                         className="score-fill"
-                        style={{ width: `${isNaN(summary.readabilityScore) ? 0 : summary.readabilityScore}%` }}
+                        style={{
+                          width: `${
+                            isNaN(summary.readabilityScore)
+                              ? 0
+                              : summary.readabilityScore
+                          }%`,
+                        }}
                       ></div>
                     </div>
-                    <span className="score-text">{isNaN(summary.readabilityScore) ? 'N/A' : Math.round(summary.readabilityScore)}/100</span>
+                    <span className="score-text">
+                      {isNaN(summary.readabilityScore)
+                        ? "N/A"
+                        : Math.round(summary.readabilityScore)}
+                      /100
+                    </span>
                   </div>
                 </div>
 
@@ -246,7 +274,9 @@ const DocumentDetail = () => {
                       className="importance-badge"
                       style={{ color: getImportanceColor(summary.importance) }}
                     >
-                      {summary.importance ? summary.importance.toUpperCase() : 'MEDIUM'}
+                      {summary.importance
+                        ? summary.importance.toUpperCase()
+                        : "MEDIUM"}
                     </span>
                   </p>
                 </div>
@@ -272,19 +302,20 @@ const DocumentDetail = () => {
                 )}
 
                 {/* Suggested Actions */}
-                {summary.suggestedActions && summary.suggestedActions.length > 0 && (
-                  <div className="actions-card">
-                    <h3>Suggested Actions</h3>
-                    <ul className="actions-list">
-                      {summary.suggestedActions.map((action, index) => (
-                        <li key={index}>
-                          <span className="action-icon">→</span>
-                          {action}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                {summary.suggestedActions &&
+                  summary.suggestedActions.length > 0 && (
+                    <div className="actions-card">
+                      <h3>Suggested Actions</h3>
+                      <ul className="actions-list">
+                        {summary.suggestedActions.map((action, index) => (
+                          <li key={index}>
+                            <span className="action-icon">→</span>
+                            {action}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                 {/* Summary Metadata */}
                 <div className="summary-meta">
@@ -295,7 +326,10 @@ const DocumentDetail = () => {
               </>
             ) : (
               <div className="empty-summary">
-                <p>No summary generated yet. Click the button above to generate one!</p>
+                <p>
+                  No summary generated yet. Click the button above to generate
+                  one!
+                </p>
               </div>
             )}
           </div>
@@ -313,10 +347,7 @@ const DocumentDetail = () => {
               >
                 ✎ Edit Document
               </button>
-              <button
-                onClick={handleDelete}
-                className="action-btn danger"
-              >
+              <button onClick={handleDelete} className="action-btn danger">
                 ✕ Delete Document
               </button>
             </div>
@@ -327,15 +358,19 @@ const DocumentDetail = () => {
             <h3>Quick Stats</h3>
             <div className="stat">
               <label>File Size</label>
-              <p>{document.fileSize && document.fileSize > 0 ? `${Math.round(document.fileSize / 1024)} KB` : 'N/A'}</p>
+              <p>
+                {document.fileSize && document.fileSize > 0
+                  ? `${Math.round(document.fileSize / 1024)} KB`
+                  : "N/A"}
+              </p>
             </div>
             <div className="stat">
               <label>Pages</label>
-              <p>{document.pages ? document.pages : 'N/A'}</p>
+              <p>{document.pages ? document.pages : "N/A"}</p>
             </div>
             <div className="stat">
               <label>Language</label>
-              <p>{document.language || 'English'}</p>
+              <p>{document.language || "English"}</p>
             </div>
           </div>
         </div>
