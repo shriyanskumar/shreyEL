@@ -58,12 +58,15 @@ const Dashboard = () => {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      verified: { class: 'ft-badge-success', label: '✓ Verified' },
-      pending: { class: 'ft-badge-warning', label: '⏳ Pending' },
-      expired: { class: 'ft-badge-error', label: '✕ Expired' },
-      submitted: { class: 'ft-badge-info', label: '📄 Submitted' },
+      verified: { class: "ft-badge-success", label: "✓ Verified" },
+      pending: { class: "ft-badge-warning", label: "⏳ Pending" },
+      expired: { class: "ft-badge-error", label: "✕ Expired" },
+      submitted: { class: "ft-badge-info", label: "📄 Submitted" },
     };
-    const s = statusMap[status?.toLowerCase()] || { class: 'ft-badge-neutral', label: status };
+    const s = statusMap[status?.toLowerCase()] || {
+      class: "ft-badge-neutral",
+      label: status,
+    };
     return <span className={`ft-badge ${s.class}`}>{s.label}</span>;
   };
 
@@ -76,8 +79,8 @@ const Dashboard = () => {
             <h1>👋 Welcome back, {user?.username}!</h1>
             <p>Track, manage, and summarize your important documents</p>
           </div>
-          <button 
-            onClick={() => navigate("/upload")} 
+          <button
+            onClick={() => navigate("/upload")}
             className="ft-btn ft-btn-primary ft-btn-lg"
           >
             + Upload Document
@@ -98,7 +101,7 @@ const Dashboard = () => {
         </div>
 
         <div className="ft-grid-3">
-          <div 
+          <div
             className="ft-stat-card ft-card-clickable"
             onClick={() => navigate("/documents")}
           >
@@ -107,21 +110,27 @@ const Dashboard = () => {
             <span className="ft-stat-description">All uploaded documents</span>
           </div>
 
-          <div 
+          <div
             className="ft-stat-card ft-card-clickable"
             onClick={() => navigate("/documents")}
           >
             <span className="ft-stat-label">Pending Summaries</span>
-            <span className="ft-stat-value warning">{stats.pendingSummaries}</span>
-            <span className="ft-stat-description">Documents awaiting AI summary</span>
+            <span className="ft-stat-value warning">
+              {stats.pendingSummaries}
+            </span>
+            <span className="ft-stat-description">
+              Documents awaiting AI summary
+            </span>
           </div>
 
-          <div 
+          <div
             className="ft-stat-card ft-card-clickable"
             onClick={() => navigate("/reminders")}
           >
             <span className="ft-stat-label">Upcoming Reminders</span>
-            <span className="ft-stat-value error">{stats.upcomingReminders}</span>
+            <span className="ft-stat-value error">
+              {stats.upcomingReminders}
+            </span>
             <span className="ft-stat-description">Expiring within 30 days</span>
           </div>
         </div>
@@ -142,7 +151,8 @@ const Dashboard = () => {
             <div className="ft-empty-icon">📄</div>
             <h3 className="ft-empty-title">No documents yet</h3>
             <p className="ft-empty-description">
-              Start by uploading your first document to get started with tracking
+              Start by uploading your first document to get started with
+              tracking
             </p>
             <button
               onClick={() => navigate("/upload")}
@@ -165,31 +175,49 @@ const Dashboard = () => {
               </thead>
               <tbody>
                 {recentDocs.map((doc) => (
-                  <tr 
+                  <tr
                     key={doc._id}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: "pointer" }}
                     onClick={() => navigate(`/documents/${doc._id}`)}
                   >
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "12px",
+                        }}
+                      >
                         <div className="section-icon">📄</div>
                         <div>
                           <div style={{ fontWeight: 500 }}>{doc.title}</div>
-                          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                            {doc.fileType?.toUpperCase() || 'PDF'}
+                          <div
+                            style={{
+                              fontSize: "12px",
+                              color: "var(--text-muted)",
+                            }}
+                          >
+                            {doc.fileType?.toUpperCase() || "PDF"}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <span className="ft-badge ft-badge-info">{doc.category}</span>
+                      <span className="ft-badge ft-badge-info">
+                        {doc.category}
+                      </span>
                     </td>
                     <td>{getStatusBadge(doc.status)}</td>
-                    <td style={{ color: 'var(--text-tertiary)' }}>
-                      {new Date(doc.updatedAt || doc.createdAt).toLocaleDateString()}
+                    <td style={{ color: "var(--text-tertiary)" }}>
+                      {new Date(
+                        doc.updatedAt || doc.createdAt
+                      ).toLocaleDateString()}
                     </td>
                     <td>
-                      <button className="ft-btn ft-btn-secondary" style={{ padding: '8px 12px' }}>
+                      <button
+                        className="ft-btn ft-btn-secondary"
+                        style={{ padding: "8px 12px" }}
+                      >
                         View →
                       </button>
                     </td>
@@ -216,12 +244,30 @@ const Dashboard = () => {
             className="ft-card ft-card-clickable"
             onClick={() => navigate("/documents")}
           >
-            <div className="ft-card-body" style={{ textAlign: 'center', padding: '32px 24px' }}>
-              <div className="section-icon" style={{ margin: '0 auto 16px', background: 'var(--primary-blue-bg)', color: 'var(--primary-blue)' }}>
+            <div
+              className="ft-card-body"
+              style={{ textAlign: "center", padding: "32px 24px" }}
+            >
+              <div
+                className="section-icon"
+                style={{
+                  margin: "0 auto 16px",
+                  background: "var(--primary-blue-bg)",
+                  color: "var(--primary-blue)",
+                }}
+              >
                 📋
               </div>
-              <h3 style={{ marginBottom: '8px', fontSize: '16px' }}>View All Documents</h3>
-              <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-tertiary)' }}>
+              <h3 style={{ marginBottom: "8px", fontSize: "16px" }}>
+                View All Documents
+              </h3>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "14px",
+                  color: "var(--text-tertiary)",
+                }}
+              >
                 Browse and manage your complete document library
               </p>
             </div>
@@ -231,12 +277,30 @@ const Dashboard = () => {
             className="ft-card ft-card-clickable"
             onClick={() => navigate("/upload")}
           >
-            <div className="ft-card-body" style={{ textAlign: 'center', padding: '32px 24px' }}>
-              <div className="section-icon" style={{ margin: '0 auto 16px', background: 'var(--success-green-bg)', color: 'var(--success-green)' }}>
+            <div
+              className="ft-card-body"
+              style={{ textAlign: "center", padding: "32px 24px" }}
+            >
+              <div
+                className="section-icon"
+                style={{
+                  margin: "0 auto 16px",
+                  background: "var(--success-green-bg)",
+                  color: "var(--success-green)",
+                }}
+              >
                 ⬆️
               </div>
-              <h3 style={{ marginBottom: '8px', fontSize: '16px' }}>Upload Document</h3>
-              <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-tertiary)' }}>
+              <h3 style={{ marginBottom: "8px", fontSize: "16px" }}>
+                Upload Document
+              </h3>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "14px",
+                  color: "var(--text-tertiary)",
+                }}
+              >
                 Add new documents with AI-powered summarization
               </p>
             </div>
@@ -246,12 +310,30 @@ const Dashboard = () => {
             className="ft-card ft-card-clickable"
             onClick={() => navigate("/reminders")}
           >
-            <div className="ft-card-body" style={{ textAlign: 'center', padding: '32px 24px' }}>
-              <div className="section-icon" style={{ margin: '0 auto 16px', background: 'var(--warning-orange-bg)', color: 'var(--warning-orange)' }}>
+            <div
+              className="ft-card-body"
+              style={{ textAlign: "center", padding: "32px 24px" }}
+            >
+              <div
+                className="section-icon"
+                style={{
+                  margin: "0 auto 16px",
+                  background: "var(--warning-orange-bg)",
+                  color: "var(--warning-orange)",
+                }}
+              >
                 ⏰
               </div>
-              <h3 style={{ marginBottom: '8px', fontSize: '16px' }}>View Reminders</h3>
-              <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-tertiary)' }}>
+              <h3 style={{ marginBottom: "8px", fontSize: "16px" }}>
+                View Reminders
+              </h3>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "14px",
+                  color: "var(--text-tertiary)",
+                }}
+              >
                 Track expiry dates and upcoming renewals
               </p>
             </div>
@@ -260,10 +342,12 @@ const Dashboard = () => {
       </div>
 
       {/* Tips Section */}
-      <div className="ft-info-box info" style={{ marginTop: '24px' }}>
+      <div className="ft-info-box info" style={{ marginTop: "24px" }}>
         <span className="ft-info-box-icon">💡</span>
         <div>
-          <strong>Pro Tip:</strong> Upload your documents to automatically generate AI summaries and set up expiry reminders to never miss important deadlines.
+          <strong>Pro Tip:</strong> Upload your documents to automatically
+          generate AI summaries and set up expiry reminders to never miss
+          important deadlines.
         </div>
       </div>
     </div>

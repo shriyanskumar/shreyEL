@@ -101,7 +101,11 @@
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary-blue) 0%, var(--success-green) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--primary-blue) 0%,
+    var(--success-green) 100%
+  );
   border-radius: var(--radius-full);
   transition: width 0.3s ease;
 }
@@ -356,8 +360,12 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Alerts */
@@ -385,15 +393,15 @@
   .upload-container {
     padding: var(--space-4);
   }
-  
+
   .form-row {
     grid-template-columns: 1fr;
   }
-  
+
   .form-actions {
     flex-direction: column;
   }
-  
+
   .form-actions .btn {
     width: 100%;
   }

@@ -94,25 +94,31 @@ const DocumentDetail = () => {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      submitted: { class: 'ft-badge-info', label: '📄 Submitted' },
-      'in-progress': { class: 'ft-badge-warning', label: '🔄 In Progress' },
-      approved: { class: 'ft-badge-success', label: '✓ Approved' },
-      verified: { class: 'ft-badge-success', label: '✓ Verified' },
-      expiring: { class: 'ft-badge-warning', label: '⚠️ Expiring' },
-      expired: { class: 'ft-badge-error', label: '✕ Expired' },
+      submitted: { class: "ft-badge-info", label: "📄 Submitted" },
+      "in-progress": { class: "ft-badge-warning", label: "🔄 In Progress" },
+      approved: { class: "ft-badge-success", label: "✓ Approved" },
+      verified: { class: "ft-badge-success", label: "✓ Verified" },
+      expiring: { class: "ft-badge-warning", label: "⚠️ Expiring" },
+      expired: { class: "ft-badge-error", label: "✕ Expired" },
     };
-    const s = statusMap[status?.toLowerCase()] || { class: 'ft-badge-neutral', label: status };
+    const s = statusMap[status?.toLowerCase()] || {
+      class: "ft-badge-neutral",
+      label: status,
+    };
     return <span className={`ft-badge ${s.class}`}>{s.label}</span>;
   };
 
   const getImportanceBadge = (importance) => {
     const importanceMap = {
-      low: { class: 'ft-badge-success', label: 'Low' },
-      medium: { class: 'ft-badge-warning', label: 'Medium' },
-      high: { class: 'ft-badge-error', label: 'High' },
-      critical: { class: 'ft-badge-error', label: '🔴 Critical' },
+      low: { class: "ft-badge-success", label: "Low" },
+      medium: { class: "ft-badge-warning", label: "Medium" },
+      high: { class: "ft-badge-error", label: "High" },
+      critical: { class: "ft-badge-error", label: "🔴 Critical" },
     };
-    const i = importanceMap[importance?.toLowerCase()] || { class: 'ft-badge-neutral', label: importance || 'Medium' };
+    const i = importanceMap[importance?.toLowerCase()] || {
+      class: "ft-badge-neutral",
+      label: importance || "Medium",
+    };
     return <span className={`ft-badge ${i.class}`}>{i.label}</span>;
   };
 
@@ -130,8 +136,13 @@ const DocumentDetail = () => {
         <div className="ft-empty-state">
           <div className="ft-empty-icon">📄</div>
           <h3 className="ft-empty-title">Document not found</h3>
-          <p className="ft-empty-description">This document may have been deleted or doesn't exist.</p>
-          <button onClick={() => navigate("/documents")} className="ft-btn ft-btn-primary">
+          <p className="ft-empty-description">
+            This document may have been deleted or doesn't exist.
+          </p>
+          <button
+            onClick={() => navigate("/documents")}
+            className="ft-btn ft-btn-primary"
+          >
             ← Back to Documents
           </button>
         </div>
@@ -139,7 +150,8 @@ const DocumentDetail = () => {
     );
   }
 
-  const isExpired = document.expiryDate && new Date(document.expiryDate) < new Date();
+  const isExpired =
+    document.expiryDate && new Date(document.expiryDate) < new Date();
   const isExpiring =
     document.expiryDate &&
     new Date(document.expiryDate) > new Date() &&
@@ -151,17 +163,31 @@ const DocumentDetail = () => {
       <div className="ft-page-header">
         <div className="ft-page-header-row">
           <div>
-            <button onClick={() => navigate("/documents")} className="ft-btn ft-btn-secondary" style={{ marginBottom: '12px' }}>
+            <button
+              onClick={() => navigate("/documents")}
+              className="ft-btn ft-btn-secondary"
+              style={{ marginBottom: "12px" }}
+            >
               ← Back to Documents
             </button>
             <h1>📄 {document.title}</h1>
             <p>Document Details & AI Analysis</p>
           </div>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <button onClick={() => navigate(`/documents/${id}/edit`)} className="ft-btn ft-btn-secondary">
+          <div style={{ display: "flex", gap: "12px" }}>
+            <button
+              onClick={() => navigate(`/documents/${id}/edit`)}
+              className="ft-btn ft-btn-secondary"
+            >
               ✏️ Edit
             </button>
-            <button onClick={handleDelete} className="ft-btn" style={{ background: 'var(--error-red-bg)', color: 'var(--error-red)' }}>
+            <button
+              onClick={handleDelete}
+              className="ft-btn"
+              style={{
+                background: "var(--error-red-bg)",
+                color: "var(--error-red)",
+              }}
+            >
               🗑️ Delete
             </button>
           </div>
@@ -169,7 +195,9 @@ const DocumentDetail = () => {
       </div>
 
       {error && <div className="ft-alert ft-alert-error">{error}</div>}
-      {successMessage && <div className="ft-alert ft-alert-success">{successMessage}</div>}
+      {successMessage && (
+        <div className="ft-alert ft-alert-success">{successMessage}</div>
+      )}
 
       <div className="detail-layout">
         {/* Main Content */}
@@ -189,7 +217,9 @@ const DocumentDetail = () => {
                 <div className="info-grid-new">
                   <div className="info-item-new">
                     <span className="info-label">Category</span>
-                    <span className="ft-badge ft-badge-info">{document.category}</span>
+                    <span className="ft-badge ft-badge-info">
+                      {document.category}
+                    </span>
                   </div>
                   <div className="info-item-new">
                     <span className="info-label">Status</span>
@@ -197,19 +227,45 @@ const DocumentDetail = () => {
                   </div>
                   <div className="info-item-new">
                     <span className="info-label">Uploaded</span>
-                    <span className="info-value">{formatDate(document.uploadedAt || document.createdAt)}</span>
+                    <span className="info-value">
+                      {formatDate(document.uploadedAt || document.createdAt)}
+                    </span>
                   </div>
                   <div className="info-item-new">
                     <span className="info-label">Last Updated</span>
-                    <span className="info-value">{formatDate(document.updatedAt)}</span>
+                    <span className="info-value">
+                      {formatDate(document.updatedAt)}
+                    </span>
                   </div>
                   {document.expiryDate && (
                     <div className="info-item-new">
                       <span className="info-label">Expiry Date</span>
-                      <span className={`info-value ${isExpired ? 'text-error' : isExpiring ? 'text-warning' : ''}`}>
+                      <span
+                        className={`info-value ${
+                          isExpired
+                            ? "text-error"
+                            : isExpiring
+                            ? "text-warning"
+                            : ""
+                        }`}
+                      >
                         {formatDate(document.expiryDate)}
-                        {isExpired && <span className="ft-badge ft-badge-error" style={{ marginLeft: '8px' }}>Expired</span>}
-                        {isExpiring && <span className="ft-badge ft-badge-warning" style={{ marginLeft: '8px' }}>Expiring Soon</span>}
+                        {isExpired && (
+                          <span
+                            className="ft-badge ft-badge-error"
+                            style={{ marginLeft: "8px" }}
+                          >
+                            Expired
+                          </span>
+                        )}
+                        {isExpiring && (
+                          <span
+                            className="ft-badge ft-badge-warning"
+                            style={{ marginLeft: "8px" }}
+                          >
+                            Expiring Soon
+                          </span>
+                        )}
                       </span>
                     </div>
                   )}
@@ -245,7 +301,9 @@ const DocumentDetail = () => {
                       disabled={generatingSummary}
                       className="ft-btn ft-btn-primary ft-btn-lg"
                     >
-                      {generatingSummary ? "⏳ Generating..." : "✨ Generate AI Summary"}
+                      {generatingSummary
+                        ? "⏳ Generating..."
+                        : "✨ Generate AI Summary"}
                     </button>
                   </div>
                 )}
@@ -253,22 +311,31 @@ const DocumentDetail = () => {
                 {summary && (
                   <div className="summary-content">
                     {/* Metrics Row */}
-                    <div className="ft-grid-2" style={{ marginBottom: '24px' }}>
+                    <div className="ft-grid-2" style={{ marginBottom: "24px" }}>
                       <div className="metric-box">
                         <span className="metric-label">Readability Score</span>
                         <div className="metric-bar">
-                          <div 
+                          <div
                             className="metric-fill"
-                            style={{ width: `${isNaN(summary.readabilityScore) ? 0 : summary.readabilityScore}%` }}
+                            style={{
+                              width: `${
+                                isNaN(summary.readabilityScore)
+                                  ? 0
+                                  : summary.readabilityScore
+                              }%`,
+                            }}
                           ></div>
                         </div>
                         <span className="metric-value">
-                          {isNaN(summary.readabilityScore) ? "N/A" : Math.round(summary.readabilityScore)}/100
+                          {isNaN(summary.readabilityScore)
+                            ? "N/A"
+                            : Math.round(summary.readabilityScore)}
+                          /100
                         </span>
                       </div>
                       <div className="metric-box">
                         <span className="metric-label">Importance Level</span>
-                        <div style={{ marginTop: '8px' }}>
+                        <div style={{ marginTop: "8px" }}>
                           {getImportanceBadge(summary.importance)}
                         </div>
                       </div>
@@ -295,16 +362,17 @@ const DocumentDetail = () => {
                     )}
 
                     {/* Suggested Actions */}
-                    {summary.suggestedActions && summary.suggestedActions.length > 0 && (
-                      <div className="actions-box">
-                        <h4>📋 Suggested Actions</h4>
-                        <ul>
-                          {summary.suggestedActions.map((action, index) => (
-                            <li key={index}>→ {action}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    {summary.suggestedActions &&
+                      summary.suggestedActions.length > 0 && (
+                        <div className="actions-box">
+                          <h4>📋 Suggested Actions</h4>
+                          <ul>
+                            {summary.suggestedActions.map((action, index) => (
+                              <li key={index}>→ {action}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
 
                     <div className="summary-meta-new">
                       Generated on {formatDate(summary?.createdAt)}
@@ -338,25 +406,36 @@ const DocumentDetail = () => {
               </div>
               <div className="sidebar-stat">
                 <span className="sidebar-stat-label">Pages</span>
-                <span className="sidebar-stat-value">{document.pages || "N/A"}</span>
+                <span className="sidebar-stat-value">
+                  {document.pages || "N/A"}
+                </span>
               </div>
               <div className="sidebar-stat">
                 <span className="sidebar-stat-label">Language</span>
-                <span className="sidebar-stat-value">{document.language || "English"}</span>
+                <span className="sidebar-stat-value">
+                  {document.language || "English"}
+                </span>
               </div>
             </div>
           </div>
 
           {/* Expiry Alert */}
           {(isExpired || isExpiring) && (
-            <div className={`ft-info-box ${isExpired ? 'error' : 'warning'}`} style={{ marginTop: '16px' }}>
-              <span className="ft-info-box-icon">{isExpired ? '⚠️' : '⏰'}</span>
+            <div
+              className={`ft-info-box ${isExpired ? "error" : "warning"}`}
+              style={{ marginTop: "16px" }}
+            >
+              <span className="ft-info-box-icon">
+                {isExpired ? "⚠️" : "⏰"}
+              </span>
               <div>
-                <strong>{isExpired ? 'Document Expired' : 'Expiring Soon'}</strong>
+                <strong>
+                  {isExpired ? "Document Expired" : "Expiring Soon"}
+                </strong>
                 <br />
-                {isExpired 
-                  ? 'This document has expired. Consider renewing it.'
-                  : 'This document will expire within 30 days.'}
+                {isExpired
+                  ? "This document has expired. Consider renewing it."
+                  : "This document will expire within 30 days."}
               </div>
             </div>
           )}

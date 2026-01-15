@@ -171,16 +171,32 @@ const DocumentList = () => {
 
   const getStatusBadge = (status) => {
     const statusMap = {
-      approved: { class: 'ft-badge-success', icon: '✓', label: 'Approved' },
-      verified: { class: 'ft-badge-success', icon: '✓', label: 'Verified' },
-      pending: { class: 'ft-badge-warning', icon: '⏳', label: 'Pending' },
-      'in-progress': { class: 'ft-badge-info', icon: '🔄', label: 'In Progress' },
-      submitted: { class: 'ft-badge-info', icon: '📄', label: 'Submitted' },
-      expiring: { class: 'ft-badge-warning', icon: '⚠️', label: 'Expiring Soon' },
-      expired: { class: 'ft-badge-error', icon: '✕', label: 'Expired' },
+      approved: { class: "ft-badge-success", icon: "✓", label: "Approved" },
+      verified: { class: "ft-badge-success", icon: "✓", label: "Verified" },
+      pending: { class: "ft-badge-warning", icon: "⏳", label: "Pending" },
+      "in-progress": {
+        class: "ft-badge-info",
+        icon: "🔄",
+        label: "In Progress",
+      },
+      submitted: { class: "ft-badge-info", icon: "📄", label: "Submitted" },
+      expiring: {
+        class: "ft-badge-warning",
+        icon: "⚠️",
+        label: "Expiring Soon",
+      },
+      expired: { class: "ft-badge-error", icon: "✕", label: "Expired" },
     };
-    const s = statusMap[status?.toLowerCase()] || { class: 'ft-badge-neutral', icon: '•', label: status };
-    return <span className={`ft-badge ${s.class}`}>{s.icon} {s.label}</span>;
+    const s = statusMap[status?.toLowerCase()] || {
+      class: "ft-badge-neutral",
+      icon: "•",
+      label: status,
+    };
+    return (
+      <span className={`ft-badge ${s.class}`}>
+        {s.icon} {s.label}
+      </span>
+    );
   };
 
   const totalPages = Math.ceil(
@@ -209,7 +225,7 @@ const DocumentList = () => {
             <h1>📋 My Documents</h1>
             <p>Manage and track all your important documents</p>
           </div>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
             <div className="ft-tabs" style={{ marginBottom: 0 }}>
               <button
                 className={`ft-tab ${viewMode === "grid" ? "active" : ""}`}
@@ -251,9 +267,11 @@ const DocumentList = () => {
 
         <div className="ft-card">
           <div className="ft-card-body">
-            <div className="ft-grid-4" style={{ alignItems: 'end' }}>
+            <div className="ft-grid-4" style={{ alignItems: "end" }}>
               <div>
-                <label className="ft-label" htmlFor="status-filter">Status</label>
+                <label className="ft-label" htmlFor="status-filter">
+                  Status
+                </label>
                 <select
                   id="status-filter"
                   name="status"
@@ -271,7 +289,9 @@ const DocumentList = () => {
               </div>
 
               <div>
-                <label className="ft-label" htmlFor="category-filter">Category</label>
+                <label className="ft-label" htmlFor="category-filter">
+                  Category
+                </label>
                 <select
                   id="category-filter"
                   name="category"
@@ -292,7 +312,9 @@ const DocumentList = () => {
               </div>
 
               <div>
-                <label className="ft-label" htmlFor="sort-filter">Sort by</label>
+                <label className="ft-label" htmlFor="sort-filter">
+                  Sort by
+                </label>
                 <select
                   id="sort-filter"
                   value={sortBy}
@@ -305,7 +327,9 @@ const DocumentList = () => {
               </div>
 
               <div>
-                <label className="ft-label" htmlFor="search-input">Search</label>
+                <label className="ft-label" htmlFor="search-input">
+                  Search
+                </label>
                 <input
                   id="search-input"
                   type="text"
@@ -335,7 +359,9 @@ const DocumentList = () => {
             <div className="ft-empty-icon">📄</div>
             <h3 className="ft-empty-title">No documents found</h3>
             <p className="ft-empty-description">
-              {searchTerm || filters.status !== 'all' || filters.category !== 'all'
+              {searchTerm ||
+              filters.status !== "all" ||
+              filters.category !== "all"
                 ? "Try adjusting your filters or search term"
                 : "Start by uploading your first document!"}
             </p>
@@ -352,10 +378,10 @@ const DocumentList = () => {
               <div className="doc-grid">
                 {paginatedDocuments.map((doc) => {
                   const expiryContext = formatExpiryContext(doc.expiryDate);
-                  
+
                   return (
-                    <div 
-                      key={doc._id} 
+                    <div
+                      key={doc._id}
                       className="ft-card ft-card-clickable doc-card-new"
                       onClick={() => navigate(`/documents/${doc._id}`)}
                     >
@@ -364,9 +390,19 @@ const DocumentList = () => {
                         <h3 className="doc-card-title">{doc.title}</h3>
                         <div className="doc-card-badges">
                           {getStatusBadge(doc.status)}
-                          <span className="ft-badge ft-badge-info">{doc.category}</span>
+                          <span className="ft-badge ft-badge-info">
+                            {doc.category}
+                          </span>
                         </div>
-                        <div className={`doc-card-expiry ${expiryContext.status === 'expired' ? 'expiry-error' : expiryContext.status === 'warning' ? 'expiry-warning' : ''}`}>
+                        <div
+                          className={`doc-card-expiry ${
+                            expiryContext.status === "expired"
+                              ? "expiry-error"
+                              : expiryContext.status === "warning"
+                              ? "expiry-warning"
+                              : ""
+                          }`}
+                        >
                           {expiryContext.text}
                         </div>
                         <div className="doc-card-actions">
@@ -386,7 +422,10 @@ const DocumentList = () => {
                               handleDelete(doc._id);
                             }}
                             className="ft-btn"
-                            style={{ background: 'var(--error-red-bg)', color: 'var(--error-red)' }}
+                            style={{
+                              background: "var(--error-red-bg)",
+                              color: "var(--error-red)",
+                            }}
                           >
                             🗑️
                           </button>
@@ -411,37 +450,58 @@ const DocumentList = () => {
                   <tbody>
                     {paginatedDocuments.map((doc) => {
                       const expiryContext = formatExpiryContext(doc.expiryDate);
-                      
+
                       return (
-                        <tr 
+                        <tr
                           key={doc._id}
-                          style={{ cursor: 'pointer' }}
+                          style={{ cursor: "pointer" }}
                           onClick={() => navigate(`/documents/${doc._id}`)}
                         >
                           <td>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "12px",
+                              }}
+                            >
                               <div className="section-icon">📄</div>
-                              <span style={{ fontWeight: 500 }}>{doc.title}</span>
+                              <span style={{ fontWeight: 500 }}>
+                                {doc.title}
+                              </span>
                             </div>
                           </td>
                           <td>
-                            <span className="ft-badge ft-badge-info">{doc.category}</span>
+                            <span className="ft-badge ft-badge-info">
+                              {doc.category}
+                            </span>
                           </td>
                           <td>{getStatusBadge(doc.status)}</td>
                           <td>
-                            <span className={expiryContext.status === 'expired' ? 'text-error' : expiryContext.status === 'warning' ? 'text-warning' : ''}>
+                            <span
+                              className={
+                                expiryContext.status === "expired"
+                                  ? "text-error"
+                                  : expiryContext.status === "warning"
+                                  ? "text-warning"
+                                  : ""
+                              }
+                            >
                               {expiryContext.text}
                             </span>
                           </td>
                           <td>
-                            <div style={{ display: 'flex', gap: '8px' }}>
+                            <div style={{ display: "flex", gap: "8px" }}>
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   navigate(`/documents/${doc._id}`);
                                 }}
                                 className="ft-btn ft-btn-secondary"
-                                style={{ padding: '6px 12px', fontSize: '13px' }}
+                                style={{
+                                  padding: "6px 12px",
+                                  fontSize: "13px",
+                                }}
                               >
                                 View
                               </button>
@@ -451,7 +511,12 @@ const DocumentList = () => {
                                   handleDelete(doc._id);
                                 }}
                                 className="ft-btn"
-                                style={{ padding: '6px 12px', fontSize: '13px', background: 'var(--error-red-bg)', color: 'var(--error-red)' }}
+                                style={{
+                                  padding: "6px 12px",
+                                  fontSize: "13px",
+                                  background: "var(--error-red-bg)",
+                                  color: "var(--error-red)",
+                                }}
                               >
                                 Delete
                               </button>

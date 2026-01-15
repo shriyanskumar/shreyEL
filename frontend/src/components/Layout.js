@@ -1,7 +1,7 @@
-import React from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import './Layout.css';
+import React from "react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import "./Layout.css";
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -10,19 +10,19 @@ const Layout = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   const navItems = [
-    { path: '/', icon: '🏠', label: 'Dashboard' },
-    { path: '/documents', icon: '📋', label: 'Documents' },
-    { path: '/upload', icon: '⬆️', label: 'Upload' },
-    { path: '/reminders', icon: '⏰', label: 'Reminders' },
+    { path: "/", icon: "🏠", label: "Dashboard" },
+    { path: "/documents", icon: "📋", label: "Documents" },
+    { path: "/upload", icon: "⬆️", label: "Upload" },
+    { path: "/reminders", icon: "⏰", label: "Reminders" },
   ];
 
   const isActive = (path) => {
-    if (path === '/') {
-      return location.pathname === '/' || location.pathname === '/dashboard';
+    if (path === "/") {
+      return location.pathname === "/" || location.pathname === "/dashboard";
     }
     return location.pathname.startsWith(path);
   };
@@ -44,7 +44,7 @@ const Layout = () => {
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
+                className={`nav-link ${isActive(item.path) ? "active" : ""}`}
               >
                 <span className="nav-link-icon">{item.icon}</span>
                 <span className="nav-link-text">{item.label}</span>
@@ -56,14 +56,20 @@ const Layout = () => {
           <div className="sidebar-user">
             <div className="user-card">
               <div className="user-avatar-circle">
-                {user?.username?.charAt(0).toUpperCase() || 'U'}
+                {user?.username?.charAt(0).toUpperCase() || "U"}
               </div>
               <div className="user-details">
-                <div className="user-display-name">{user?.username || 'User'}</div>
-                <div className="user-email-text">{user?.email || ''}</div>
+                <div className="user-display-name">
+                  {user?.username || "User"}
+                </div>
+                <div className="user-email-text">{user?.email || ""}</div>
               </div>
             </div>
-            <button onClick={handleLogout} className="btn-logout" title="Logout">
+            <button
+              onClick={handleLogout}
+              className="btn-logout"
+              title="Logout"
+            >
               🚪 Logout
             </button>
           </div>

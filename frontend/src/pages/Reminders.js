@@ -46,10 +46,13 @@ const Reminders = () => {
   };
 
   const getUrgencyInfo = (daysUntil) => {
-    if (daysUntil < 0) return { class: 'overdue', badge: 'ft-badge-error', label: 'Overdue' };
-    if (daysUntil <= 7) return { class: 'urgent', badge: 'ft-badge-error', label: 'Urgent' };
-    if (daysUntil <= 30) return { class: 'soon', badge: 'ft-badge-warning', label: 'Soon' };
-    return { class: 'normal', badge: 'ft-badge-success', label: 'On Track' };
+    if (daysUntil < 0)
+      return { class: "overdue", badge: "ft-badge-error", label: "Overdue" };
+    if (daysUntil <= 7)
+      return { class: "urgent", badge: "ft-badge-error", label: "Urgent" };
+    if (daysUntil <= 30)
+      return { class: "soon", badge: "ft-badge-warning", label: "Soon" };
+    return { class: "normal", badge: "ft-badge-success", label: "On Track" };
   };
 
   if (loading) {
@@ -98,25 +101,29 @@ const Reminders = () => {
           <div className="ft-stat-card">
             <span className="ft-stat-label">Overdue</span>
             <span className="ft-stat-value error">
-              {reminders.filter(r => getDaysUntil(r.reminderDate) < 0).length}
+              {reminders.filter((r) => getDaysUntil(r.reminderDate) < 0).length}
             </span>
           </div>
           <div className="ft-stat-card">
             <span className="ft-stat-label">Due This Week</span>
             <span className="ft-stat-value warning">
-              {reminders.filter(r => {
-                const days = getDaysUntil(r.reminderDate);
-                return days >= 0 && days <= 7;
-              }).length}
+              {
+                reminders.filter((r) => {
+                  const days = getDaysUntil(r.reminderDate);
+                  return days >= 0 && days <= 7;
+                }).length
+              }
             </span>
           </div>
           <div className="ft-stat-card">
             <span className="ft-stat-label">Due This Month</span>
             <span className="ft-stat-value">
-              {reminders.filter(r => {
-                const days = getDaysUntil(r.reminderDate);
-                return days >= 0 && days <= 30;
-              }).length}
+              {
+                reminders.filter((r) => {
+                  const days = getDaysUntil(r.reminderDate);
+                  return days >= 0 && days <= 30;
+                }).length
+              }
             </span>
           </div>
         </div>
@@ -163,9 +170,13 @@ const Reminders = () => {
                 >
                   <div className="ft-card-body">
                     <div className="reminder-header">
-                      <span className={`ft-badge ${urgency.badge}`}>{urgency.label}</span>
+                      <span className={`ft-badge ${urgency.badge}`}>
+                        {urgency.label}
+                      </span>
                       {reminder.read ? (
-                        <span className="ft-badge ft-badge-neutral">✓ Read</span>
+                        <span className="ft-badge ft-badge-neutral">
+                          ✓ Read
+                        </span>
                       ) : (
                         <span className="ft-badge ft-badge-info">● New</span>
                       )}
@@ -178,21 +189,22 @@ const Reminders = () => {
                     <div className="reminder-details">
                       <div className="reminder-date">
                         <span className="detail-label">Due Date</span>
-                        <span className="detail-value">{formatDate(reminder.reminderDate)}</span>
+                        <span className="detail-value">
+                          {formatDate(reminder.reminderDate)}
+                        </span>
                       </div>
-                      
+
                       <div className="reminder-countdown">
                         {daysUntil < 0 ? (
                           <span className="countdown overdue">
                             ⚠️ {Math.abs(daysUntil)} days overdue
                           </span>
                         ) : daysUntil === 0 ? (
-                          <span className="countdown today">
-                            🔔 Due today!
-                          </span>
+                          <span className="countdown today">🔔 Due today!</span>
                         ) : (
                           <span className={`countdown ${urgency.class}`}>
-                            ⏳ {daysUntil} {daysUntil === 1 ? "day" : "days"} remaining
+                            ⏳ {daysUntil} {daysUntil === 1 ? "day" : "days"}{" "}
+                            remaining
                           </span>
                         )}
                       </div>
@@ -200,7 +212,9 @@ const Reminders = () => {
 
                     {reminder.document?.category && (
                       <div className="reminder-category">
-                        <span className="ft-badge ft-badge-info">{reminder.document.category}</span>
+                        <span className="ft-badge ft-badge-info">
+                          {reminder.document.category}
+                        </span>
                       </div>
                     )}
 
@@ -220,7 +234,8 @@ const Reminders = () => {
         <div className="ft-info-box warning">
           <span className="ft-info-box-icon">💡</span>
           <div>
-            <strong>Stay Organized:</strong> Review your reminders regularly to ensure you don't miss important document renewals or expirations.
+            <strong>Stay Organized:</strong> Review your reminders regularly to
+            ensure you don't miss important document renewals or expirations.
           </div>
         </div>
       )}

@@ -9,7 +9,7 @@
 }
 
 .ft-stat-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -60,7 +60,7 @@
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .ft-page-header-row .ft-btn {
     width: 100%;
     justify-content: center;
