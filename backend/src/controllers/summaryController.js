@@ -48,14 +48,14 @@ exports.generateSummary = async (req, res) => {
     if (document.title) contentParts.push(`Title: ${document.title}`);
     if (document.description)
       contentParts.push(`Description: ${document.description}`);
-    if (document.fileUrl) contentParts.push(document.fileUrl);
 
     const content = contentParts.join("\n") || "Document uploaded for tracking";
 
-    // Call AI service to generate summary
+    // Call AI service to generate summary (send fileUrl for document parsing)
     const aiResult = await AIService.generateSummary(
       content,
-      document.category || "other"
+      document.category || "other",
+      document.fileUrl || ""
     );
 
     // Save summary to database

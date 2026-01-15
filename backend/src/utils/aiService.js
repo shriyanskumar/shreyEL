@@ -12,19 +12,21 @@ const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://localhost:5001";
 class AIService {
   /**
    * Generate summary for document content using AI
-   * @param {string} content - Document text
+   * @param {string} content - Document text/metadata
    * @param {string} category - Document category
+   * @param {string} fileUrl - URL to document file (PDF/image) for text extraction
    * @returns {Promise<Object>} Summary result with key points, actions, scores
    */
-  static async generateSummary(content, category = "other") {
+  static async generateSummary(content, category = "other", fileUrl = "") {
     try {
       logger.info(`Calling AI service at: ${AI_SERVICE_URL}/api/summarize`);
+      logger.info(`File URL provided: ${fileUrl ? "Yes" : "No"}`);
 
       const response = await axios.post(
         `${AI_SERVICE_URL}/api/summarize`,
-        { content, category },
+        { content, category, fileUrl },
         {
-          timeout: 60000,
+          timeout: 120000, // 2 minutes for file processing
           headers: { "Content-Type": "application/json" },
         }
       );
