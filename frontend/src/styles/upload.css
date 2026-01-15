@@ -62,7 +62,11 @@
 /* Upload Zone */
 .upload-zone {
   padding: var(--space-2xl);
-  background: linear-gradient(135deg, rgba(91, 141, 238, 0.05) 0%, rgba(191, 90, 242, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(91, 141, 238, 0.05) 0%,
+    rgba(191, 90, 242, 0.05) 100%
+  );
   border: 2px dashed rgba(91, 141, 238, 0.3);
   border-radius: var(--radius-xl);
   text-align: center;
@@ -79,7 +83,11 @@
 
 .upload-zone:hover {
   border-color: var(--accent-blue);
-  background: linear-gradient(135deg, rgba(91, 141, 238, 0.1) 0%, rgba(191, 90, 242, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(91, 141, 238, 0.1) 0%,
+    rgba(191, 90, 242, 0.1) 100%
+  );
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -180,7 +188,7 @@
 
 .form-section h2 {
   font-size: 18px;
-  color: var(--text-primary);
+  color: #ffffff !important;
   margin: 0 0 var(--space-lg) 0;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -198,13 +206,17 @@
   display: block;
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #e5e5ea !important;
   margin-bottom: 8px;
   letter-spacing: -0.01em;
 }
 
 .required {
-  color: var(--accent-red);
+  color: #ff6b6b !important;
+}
+
+.helper-text {
+  color: #a1a1a6 !important;
 }
 
 .form-group input,
@@ -294,7 +306,7 @@
 }
 
 .info-box li:before {
-  content: '✓';
+  content: "✓";
   position: absolute;
   left: 0;
   color: var(--accent-green);
@@ -480,7 +492,8 @@
 
 .color-preset.active {
   border-color: var(--text-primary);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2), inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.2);
 }
 
 .color-wheel-section {
