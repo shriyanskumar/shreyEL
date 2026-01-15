@@ -1,231 +1,140 @@
-.reminders-page {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xl);
-}
-
-.reminders-header {
-  margin-bottom: 0;
-}
-
-.reminders-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 8px;
-}
-
-.reminders-header p {
-  font-size: 16px;
-  color: var(--text-secondary);
-  margin: 0;
-}
-
-.reminders-actions {
-  margin-bottom: var(--space-lg);
-}
+/* 
+  Reminders Page Styles - Fintech Modern Theme
+*/
 
 /* Reminders Grid */
 .reminders-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: var(--space-lg);
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-6);
 }
 
-.reminder-card {
-  padding: var(--space-lg);
-  background: var(--bg-glass);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: var(--radius-xl);
+/* Reminder Card */
+.reminder-card-new {
+  border-left: 4px solid var(--border-light);
+  transition: all 0.2s ease;
+}
+
+.reminder-card-new.overdue {
+  border-left-color: var(--error-red);
+}
+
+.reminder-card-new.urgent {
+  border-left-color: var(--error-red);
+}
+
+.reminder-card-new.soon {
+  border-left-color: var(--warning-orange);
+}
+
+.reminder-card-new.normal {
+  border-left-color: var(--success-green);
+}
+
+.reminder-card-new .ft-card-body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-left: 4px solid var(--accent-blue);
+  gap: var(--space-4);
 }
 
-.reminder-card.overdue {
-  border-left-color: var(--accent-red);
-  background: linear-gradient(to right, rgba(255, 59, 48, 0.05), var(--bg-glass));
-}
-
-.reminder-card.urgent {
-  border-left-color: var(--accent-orange);
-  background: linear-gradient(to right, rgba(255, 159, 10, 0.05), var(--bg-glass));
-}
-
-.reminder-card.soon {
-  border-left-color: #ffd60a;
-  background: linear-gradient(to right, rgba(255, 214, 10, 0.05), var(--bg-glass));
-}
-
-.reminder-card:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-4px);
-}
-
-.reminder-status-indicator {
+.reminder-header {
   display: flex;
-  justify-content: flex-end;
+  gap: var(--space-2);
+  flex-wrap: wrap;
 }
 
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: var(--radius-lg);
-  font-size: 12px;
+.reminder-title {
+  font-size: var(--font-size-lg);
   font-weight: 600;
-}
-
-.status-badge.read {
-  background: rgba(48, 209, 88, 0.15);
-  color: var(--accent-green);
-}
-
-.status-badge.unread {
-  background: rgba(255, 59, 48, 0.15);
-  color: var(--accent-red);
-}
-
-.reminder-doc-title {
-  font-size: 18px;
-  font-weight: 700;
   color: var(--text-primary);
   margin: 0;
+  line-height: 1.4;
 }
 
-.reminder-date-section {
+.reminder-details {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: var(--space-md);
-  background: rgba(0, 0, 0, 0.02);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  gap: var(--space-3);
 }
 
-.reminder-date-label {
-  font-size: 12px;
-  color: var(--text-secondary);
-  font-weight: 600;
+.reminder-date {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.detail-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.reminder-date-value {
-  font-size: 15px;
+.detail-value {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
   color: var(--text-primary);
-  font-weight: 600;
 }
 
 .reminder-countdown {
-  padding: var(--space-md);
-  background: rgba(0, 0, 0, 0.02);
+  padding: var(--space-3);
+  background-color: var(--bg-gray-50);
   border-radius: var(--radius-md);
 }
 
-.countdown-text {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-weight: 600;
+.countdown {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
 }
 
-.countdown-text.overdue {
-  color: var(--accent-red);
+.countdown.overdue {
+  color: var(--error-red);
 }
 
-.countdown-text.today {
-  color: var(--accent-orange);
+.countdown.today {
+  color: var(--warning-orange);
 }
 
-.countdown-text.urgent {
-  color: var(--accent-orange);
+.countdown.urgent {
+  color: var(--error-red);
 }
 
-.countdown-text.soon {
-  color: #d4a500;
+.countdown.soon {
+  color: var(--warning-orange);
 }
 
-.countdown-text.normal {
-  color: var(--accent-blue);
+.countdown.normal {
+  color: var(--success-green);
 }
 
 .reminder-category {
-  margin-top: 8px;
+  padding-top: var(--space-2);
 }
 
-.category-tag {
-  display: inline-block;
-  padding: 6px 12px;
-  background: rgba(91, 141, 238, 0.15);
-  color: var(--accent-blue);
-  border-radius: var(--radius-lg);
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.reminder-action {
-  margin-top: auto;
-  padding-top: var(--space-md);
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.view-doc-btn {
+.reminder-view-btn {
   width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, var(--accent-blue) 0%, #4a7de8 100%);
-  color: white;
-  border: none;
-  border-radius: var(--radius-lg);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(91, 141, 238, 0.3);
+  margin-top: var(--space-2);
 }
 
-.view-doc-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(91, 141, 238, 0.4);
+/* Stat cards override for reminders */
+.ft-stat-card:nth-child(1)::before {
+  background: var(--primary-blue);
 }
 
-.empty-state {
-  padding: var(--space-2xl);
-  text-align: center;
-  background: var(--bg-glass);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: var(--radius-xl);
+.ft-stat-card:nth-child(2)::before {
+  background: var(--error-red);
 }
 
-.empty-icon {
-  font-size: 80px;
-  margin-bottom: var(--space-lg);
-  opacity: 0.5;
+.ft-stat-card:nth-child(3)::before {
+  background: var(--warning-orange);
 }
 
-.empty-state h2 {
-  font-size: 24px;
-  margin-bottom: var(--space-md);
+.ft-stat-card:nth-child(4)::before {
+  background: var(--success-green);
 }
 
-.empty-state p {
-  color: var(--text-secondary);
-  margin-bottom: var(--space-lg);
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-  .reminders-header h1 {
-    font-size: 1.75rem;
-  }
-
   .reminders-grid {
     grid-template-columns: 1fr;
   }

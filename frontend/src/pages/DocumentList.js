@@ -22,17 +22,6 @@ const DocumentList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
 
-  const categoryColors = {
-    insurance: "#E8544A",
-    license: "#4CAF50",
-    certificate: "#2196F3",
-    permit: "#FF9800",
-    contract: "#9C27B0",
-    bank: "#00BCD4",
-    medical: "#E91E63",
-    other: "#757575",
-  };
-
   const [pagination, setPagination] = useState({
     currentPage: 1,
     itemsPerPage: 12,
@@ -131,10 +120,6 @@ const DocumentList = () => {
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
   };
 
-  const getCategoryColor = (category) => {
-    return categoryColors[category?.toLowerCase()] || categoryColors["other"];
-  };
-
   const formatExpiryContext = (expiryDate) => {
     if (!expiryDate) return { text: "No expiry date", status: "normal" };
     const expiry = new Date(expiryDate);
@@ -184,6 +169,20 @@ const DocumentList = () => {
     });
   };
 
+  const getStatusBadge = (status) => {
+    const statusMap = {
+      approved: { class: 'ft-badge-success', icon: '✓', label: 'Approved' },
+      verified: { class: 'ft-badge-success', icon: '✓', label: 'Verified' },
+      pending: { class: 'ft-badge-warning', icon: '⏳', label: 'Pending' },
+      'in-progress': { class: 'ft-badge-info', icon: '🔄', label: 'In Progress' },
+      submitted: { class: 'ft-badge-info', icon: '📄', label: 'Submitted' },
+      expiring: { class: 'ft-badge-warning', icon: '⚠️', label: 'Expiring Soon' },
+      expired: { class: 'ft-badge-error', icon: '✕', label: 'Expired' },
+    };
+    const s = statusMap[status?.toLowerCase()] || { class: 'ft-badge-neutral', icon: '•', label: status };
+    return <span className={`ft-badge ${s.class}`}>{s.icon} {s.label}</span>;
+  };
+
   const totalPages = Math.ceil(
     (filteredDocuments?.length || 0) / pagination.itemsPerPage
   );
@@ -195,288 +194,314 @@ const DocumentList = () => {
 
   if (loading) {
     return (
-      <div className="documents-container">
-        <div className="loading-spinner">Loading documents...</div>
+      <div className="ft-page">
+        <div className="ft-loading">Loading documents...</div>
       </div>
     );
   }
 
   return (
-    <div className="documents-container">
+    <div className="ft-page fade-in">
       {/* Page Header */}
-      <div className="documents-header">
-        <div>
-          <h1>My Documents</h1>
-          <p>Manage and track all your important documents</p>
-        </div>
-        <div className="documents-header-actions">
-          <div className="view-toggle">
+      <div className="ft-page-header">
+        <div className="ft-page-header-row">
+          <div>
+            <h1>📋 My Documents</h1>
+            <p>Manage and track all your important documents</p>
+          </div>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div className="ft-tabs" style={{ marginBottom: 0 }}>
+              <button
+                className={`ft-tab ${viewMode === "grid" ? "active" : ""}`}
+                onClick={() => setViewMode("grid")}
+              >
+                ⊞ Grid
+              </button>
+              <button
+                className={`ft-tab ${viewMode === "compact" ? "active" : ""}`}
+                onClick={() => setViewMode("compact")}
+              >
+                ☰ List
+              </button>
+            </div>
             <button
-              className={`toggle-btn ${viewMode === "grid" ? "active" : ""}`}
-              onClick={() => setViewMode("grid")}
-              title="Grid view"
+              onClick={() => navigate("/upload")}
+              className="ft-btn ft-btn-primary"
             >
-              ≡
-            </button>
-            <button
-              className={`toggle-btn ${viewMode === "compact" ? "active" : ""}`}
-              onClick={() => setViewMode("compact")}
-              title="List view"
-            >
-              ☰
+              + Upload
             </button>
           </div>
-          <button
-            onClick={() => navigate("/upload")}
-            className="btn btn-primary"
-          >
-            ↑ Upload
-          </button>
         </div>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="ft-alert ft-alert-error">{error}</div>}
       {successMessage && (
-        <div className="alert alert-success">{successMessage}</div>
+        <div className="ft-alert ft-alert-success">{successMessage}</div>
       )}
 
-      {/* Filters */}
-      <div className="filters-section">
-        <div className="filter-group">
-          <label htmlFor="status-filter">Status</label>
-          <select
-            id="status-filter"
-            name="status"
-            value={filters.status}
-            onChange={handleFilterChange}
-            className="filter-select"
-          >
-            <option value="all">All Statuses</option>
-            <option value="submitted">Submitted</option>
-            <option value="in-progress">In Progress</option>
-            <option value="approved">Approved</option>
-            <option value="expiring">Expiring</option>
-            <option value="expired">Expired</option>
-          </select>
+      {/* Filters Section */}
+      <div className="ft-section">
+        <div className="section-header">
+          <div className="section-badge">1</div>
+          <div className="section-content">
+            <h2>Filters & Search</h2>
+            <p>REFINE YOUR DOCUMENTS</p>
+          </div>
         </div>
 
-        <div className="filter-group">
-          <label htmlFor="category-filter">Category</label>
-          <select
-            id="category-filter"
-            name="category"
-            value={filters.category}
-            onChange={handleFilterChange}
-            className="filter-select"
-          >
-            <option value="all">All Categories</option>
-            <option value="license">License</option>
-            <option value="certificate">Certificate</option>
-            <option value="permit">Permit</option>
-            <option value="insurance">Insurance</option>
-            <option value="contract">Contract</option>
-            <option value="bank">Bank</option>
-            <option value="medical">Medical</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-
-        <div className="filter-group">
-          <label htmlFor="sort-filter">Sort by</label>
-          <select
-            id="sort-filter"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="filter-select"
-          >
-            <option value="newest">Newest first</option>
-            <option value="expiry-soon">Expiry soon</option>
-          </select>
-        </div>
-
-        <div className="filter-group search-group">
-          <label htmlFor="search-input">Search</label>
-          <input
-            id="search-input"
-            type="text"
-            placeholder="Search by title..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-        </div>
-      </div>
-
-      {/* Documents Display */}
-      {filteredDocuments.length === 0 ? (
-        <div className="empty-state">
-          <p>No documents found. Start by uploading your first document!</p>
-          <button
-            onClick={() => navigate("/upload")}
-            className="btn btn-primary"
-          >
-            ↑ Upload Document
-          </button>
-        </div>
-      ) : (
-        <>
-          {viewMode === "grid" ? (
-            <div className="documents-grid">
-              {paginatedDocuments.map((doc) => {
-                const expiryContext = formatExpiryContext(doc.expiryDate);
-                const catColor =
-                  doc.categoryId?.color || getCategoryColor(doc.category);
-                const catIcon = doc.categoryId?.icon || "";
-                const catLabel = doc.categoryId?.name || doc.category;
-
-                return (
-                  <div key={doc._id} className="doc-card">
-                    <div
-                      className="card-clickable"
-                      onClick={() => navigate(`/documents/${doc._id}`)}
-                    >
-                      <div className="card-thumb">◻</div>
-                      <div className="card-title">{doc.title}</div>
-                      <div className="card-meta">
-                        <span className={`badge badge-${doc.status}`}>
-                          {doc.status}
-                        </span>
-                        <span
-                          className="badge"
-                          style={{ backgroundColor: catColor, color: "#fff" }}
-                        >
-                          {catIcon} {catLabel}
-                        </span>
-                      </div>
-                      <div
-                        className={`card-expiry expiry-${expiryContext.status}`}
-                      >
-                        {expiryContext.text}
-                      </div>
-                    </div>
-                    <div className="card-actions">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/documents/${doc._id}`);
-                        }}
-                        className="btn-action"
-                        title="View document"
-                      >
-                        ◉
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(doc._id);
-                        }}
-                        className="btn-action btn-delete"
-                        title="Delete document"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="documents-list">
-              {paginatedDocuments.map((doc) => {
-                const expiryContext = formatExpiryContext(doc.expiryDate);
-                const catColor =
-                  doc.categoryId?.color || getCategoryColor(doc.category);
-                const catIcon = doc.categoryId?.icon || "";
-                const catLabel = doc.categoryId?.name || doc.category;
-
-                return (
-                  <div key={doc._id} className="list-item">
-                    <div
-                      className="list-main"
-                      onClick={() => navigate(`/documents/${doc._id}`)}
-                    >
-                      <div className="list-title">◻ {doc.title}</div>
-                      <div className="list-meta">
-                        <span className={`badge badge-${doc.status}`}>
-                          {doc.status}
-                        </span>
-                        <span
-                          className="badge"
-                          style={{ backgroundColor: catColor, color: "#fff" }}
-                        >
-                          {catIcon} {catLabel}
-                        </span>
-                        <span
-                          className={`meta-expiry expiry-${expiryContext.status}`}
-                        >
-                          {expiryContext.text}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="list-actions">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/documents/${doc._id}`);
-                        }}
-                        className="btn-action"
-                        title="View document"
-                      >
-                        ◉
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(doc._id);
-                        }}
-                        className="btn-action btn-delete"
-                        title="Delete document"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="pagination">
-              <button
-                onClick={() =>
-                  setPagination((prev) => ({
-                    ...prev,
-                    currentPage: Math.max(1, prev.currentPage - 1),
-                  }))
-                }
-                disabled={pagination.currentPage === 1}
-                className="pagination-btn"
-              >
-                ← Previous
-              </button>
-
-              <div className="pagination-info">
-                Page {pagination.currentPage} of {totalPages}
+        <div className="ft-card">
+          <div className="ft-card-body">
+            <div className="ft-grid-4" style={{ alignItems: 'end' }}>
+              <div>
+                <label className="ft-label" htmlFor="status-filter">Status</label>
+                <select
+                  id="status-filter"
+                  name="status"
+                  value={filters.status}
+                  onChange={handleFilterChange}
+                  className="ft-select"
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="submitted">Submitted</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="approved">Approved</option>
+                  <option value="expiring">Expiring</option>
+                  <option value="expired">Expired</option>
+                </select>
               </div>
 
-              <button
-                onClick={() =>
-                  setPagination((prev) => ({
-                    ...prev,
-                    currentPage: Math.min(totalPages, prev.currentPage + 1),
-                  }))
-                }
-                disabled={pagination.currentPage === totalPages}
-                className="pagination-btn"
-              >
-                Next →
-              </button>
+              <div>
+                <label className="ft-label" htmlFor="category-filter">Category</label>
+                <select
+                  id="category-filter"
+                  name="category"
+                  value={filters.category}
+                  onChange={handleFilterChange}
+                  className="ft-select"
+                >
+                  <option value="all">All Categories</option>
+                  <option value="license">License</option>
+                  <option value="certificate">Certificate</option>
+                  <option value="permit">Permit</option>
+                  <option value="insurance">Insurance</option>
+                  <option value="contract">Contract</option>
+                  <option value="bank">Bank</option>
+                  <option value="medical">Medical</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="ft-label" htmlFor="sort-filter">Sort by</label>
+                <select
+                  id="sort-filter"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="ft-select"
+                >
+                  <option value="newest">Newest first</option>
+                  <option value="expiry-soon">Expiry soon</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="ft-label" htmlFor="search-input">Search</label>
+                <input
+                  id="search-input"
+                  type="text"
+                  placeholder="Search by title..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="ft-input"
+                />
+              </div>
             </div>
-          )}
-        </>
-      )}
+          </div>
+        </div>
+      </div>
+
+      {/* Documents Section */}
+      <div className="ft-section">
+        <div className="section-header">
+          <div className="section-badge">2</div>
+          <div className="section-content">
+            <h2>Documents ({filteredDocuments.length})</h2>
+            <p>YOUR DOCUMENT LIBRARY</p>
+          </div>
+        </div>
+
+        {filteredDocuments.length === 0 ? (
+          <div className="ft-empty-state">
+            <div className="ft-empty-icon">📄</div>
+            <h3 className="ft-empty-title">No documents found</h3>
+            <p className="ft-empty-description">
+              {searchTerm || filters.status !== 'all' || filters.category !== 'all'
+                ? "Try adjusting your filters or search term"
+                : "Start by uploading your first document!"}
+            </p>
+            <button
+              onClick={() => navigate("/upload")}
+              className="ft-btn ft-btn-primary"
+            >
+              + Upload Document
+            </button>
+          </div>
+        ) : (
+          <>
+            {viewMode === "grid" ? (
+              <div className="doc-grid">
+                {paginatedDocuments.map((doc) => {
+                  const expiryContext = formatExpiryContext(doc.expiryDate);
+                  
+                  return (
+                    <div 
+                      key={doc._id} 
+                      className="ft-card ft-card-clickable doc-card-new"
+                      onClick={() => navigate(`/documents/${doc._id}`)}
+                    >
+                      <div className="ft-card-body">
+                        <div className="doc-card-icon">📄</div>
+                        <h3 className="doc-card-title">{doc.title}</h3>
+                        <div className="doc-card-badges">
+                          {getStatusBadge(doc.status)}
+                          <span className="ft-badge ft-badge-info">{doc.category}</span>
+                        </div>
+                        <div className={`doc-card-expiry ${expiryContext.status === 'expired' ? 'expiry-error' : expiryContext.status === 'warning' ? 'expiry-warning' : ''}`}>
+                          {expiryContext.text}
+                        </div>
+                        <div className="doc-card-actions">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/documents/${doc._id}`);
+                            }}
+                            className="ft-btn ft-btn-secondary"
+                            style={{ flex: 1 }}
+                          >
+                            View
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(doc._id);
+                            }}
+                            className="ft-btn"
+                            style={{ background: 'var(--error-red-bg)', color: 'var(--error-red)' }}
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="ft-card">
+                <table className="ft-table">
+                  <thead>
+                    <tr>
+                      <th>Document</th>
+                      <th>Category</th>
+                      <th>Status</th>
+                      <th>Expiry</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedDocuments.map((doc) => {
+                      const expiryContext = formatExpiryContext(doc.expiryDate);
+                      
+                      return (
+                        <tr 
+                          key={doc._id}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => navigate(`/documents/${doc._id}`)}
+                        >
+                          <td>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <div className="section-icon">📄</div>
+                              <span style={{ fontWeight: 500 }}>{doc.title}</span>
+                            </div>
+                          </td>
+                          <td>
+                            <span className="ft-badge ft-badge-info">{doc.category}</span>
+                          </td>
+                          <td>{getStatusBadge(doc.status)}</td>
+                          <td>
+                            <span className={expiryContext.status === 'expired' ? 'text-error' : expiryContext.status === 'warning' ? 'text-warning' : ''}>
+                              {expiryContext.text}
+                            </span>
+                          </td>
+                          <td>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/documents/${doc._id}`);
+                                }}
+                                className="ft-btn ft-btn-secondary"
+                                style={{ padding: '6px 12px', fontSize: '13px' }}
+                              >
+                                View
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDelete(doc._id);
+                                }}
+                                className="ft-btn"
+                                style={{ padding: '6px 12px', fontSize: '13px', background: 'var(--error-red-bg)', color: 'var(--error-red)' }}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="doc-pagination">
+                <button
+                  onClick={() =>
+                    setPagination((prev) => ({
+                      ...prev,
+                      currentPage: Math.max(1, prev.currentPage - 1),
+                    }))
+                  }
+                  disabled={pagination.currentPage === 1}
+                  className="ft-btn ft-btn-secondary"
+                >
+                  ← Previous
+                </button>
+
+                <span className="pagination-info">
+                  Page {pagination.currentPage} of {totalPages}
+                </span>
+
+                <button
+                  onClick={() =>
+                    setPagination((prev) => ({
+                      ...prev,
+                      currentPage: Math.min(totalPages, prev.currentPage + 1),
+                    }))
+                  }
+                  disabled={pagination.currentPage === totalPages}
+                  className="ft-btn ft-btn-secondary"
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };

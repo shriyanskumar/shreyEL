@@ -14,10 +14,10 @@ const Layout = () => {
   };
 
   const navItems = [
-    { path: '/', icon: '◉', label: 'Dashboard' },
-    { path: '/documents', icon: '◻', label: 'Documents' },
-    { path: '/upload', icon: '↑', label: 'Upload' },
-    { path: '/reminders', icon: '⚠', label: 'Reminders' },
+    { path: '/', icon: '🏠', label: 'Dashboard' },
+    { path: '/documents', icon: '📋', label: 'Documents' },
+    { path: '/upload', icon: '⬆️', label: 'Upload' },
+    { path: '/reminders', icon: '⏰', label: 'Reminders' },
   ];
 
   const isActive = (path) => {
@@ -28,52 +28,50 @@ const Layout = () => {
   };
 
   return (
-    <div className="app-container">
+    <div className="app-layout">
       {/* Left Sidebar */}
-      <aside className="sidebar">
-        <div className="sidebar-content">
+      <aside className="app-sidebar">
+        <div className="sidebar-inner">
           {/* Logo/Brand */}
-          <div className="sidebar-header">
-            <div className="brand">
-              <span className="brand-icon">◻</span>
-              <span className="brand-text">DocTracker</span>
-            </div>
+          <div className="sidebar-brand">
+            <div className="brand-logo">📄</div>
+            <span className="brand-name">DocTracker</span>
           </div>
 
           {/* Navigation */}
-          <nav className="sidebar-nav">
+          <nav className="sidebar-navigation">
             {navItems.map((item) => (
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
+                className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
               >
-                <span className="nav-icon">{item.icon}</span>
-                <span className="nav-label">{item.label}</span>
+                <span className="nav-link-icon">{item.icon}</span>
+                <span className="nav-link-text">{item.label}</span>
               </button>
             ))}
           </nav>
 
-          {/* User Profile */}
-          <div className="sidebar-footer">
-            <div className="user-profile">
-              <div className="user-avatar">
+          {/* User Section */}
+          <div className="sidebar-user">
+            <div className="user-card">
+              <div className="user-avatar-circle">
                 {user?.username?.charAt(0).toUpperCase() || 'U'}
               </div>
-              <div className="user-info">
-                <div className="user-name">{user?.username || 'User'}</div>
-                <div className="user-email">{user?.email || ''}</div>
+              <div className="user-details">
+                <div className="user-display-name">{user?.username || 'User'}</div>
+                <div className="user-email-text">{user?.email || ''}</div>
               </div>
             </div>
-            <button onClick={handleLogout} className="logout-button" title="Logout">
-              ✕
+            <button onClick={handleLogout} className="btn-logout" title="Logout">
+              🚪 Logout
             </button>
           </div>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className="main-content">
+      <main className="app-main">
         <Outlet />
       </main>
     </div>

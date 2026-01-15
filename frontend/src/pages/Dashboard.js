@@ -56,130 +56,214 @@ const Dashboard = () => {
     fetchStats();
   }, []);
 
+  const getStatusBadge = (status) => {
+    const statusMap = {
+      verified: { class: 'ft-badge-success', label: '✓ Verified' },
+      pending: { class: 'ft-badge-warning', label: '⏳ Pending' },
+      expired: { class: 'ft-badge-error', label: '✕ Expired' },
+      submitted: { class: 'ft-badge-info', label: '📄 Submitted' },
+    };
+    const s = statusMap[status?.toLowerCase()] || { class: 'ft-badge-neutral', label: status };
+    return <span className={`ft-badge ${s.class}`}>{s.label}</span>;
+  };
+
   return (
-    <div className="dashboard-page">
+    <div className="ft-page fade-in">
       {/* Page Header */}
-      <div className="page-header-wrapper">
-        <div className="page-header-left">
-          <h1>Welcome back, {user?.username}!</h1>
-          <p>Track, manage, and summarize your important documents</p>
+      <div className="ft-page-header">
+        <div className="ft-page-header-row">
+          <div>
+            <h1>👋 Welcome back, {user?.username}!</h1>
+            <p>Track, manage, and summarize your important documents</p>
+          </div>
+          <button 
+            onClick={() => navigate("/upload")} 
+            className="ft-btn ft-btn-primary ft-btn-lg"
+          >
+            + Upload Document
+          </button>
         </div>
       </div>
 
-      {error && <div className="alert alert-error">{error}</div>}
+      {error && <div className="ft-alert ft-alert-error">{error}</div>}
 
-      {/* Stats Grid */}
-      <div className="stats-grid">
-        <div className="stat-card glass-card">
-          <div className="stat-icon">◻</div>
-          <div className="stat-content">
-            <span className="stat-label">Total Documents</span>
-            <span className="stat-value">{stats.totalDocuments}</span>
+      {/* Section 1: Overview Stats */}
+      <div className="ft-section">
+        <div className="section-header">
+          <div className="section-badge">1</div>
+          <div className="section-content">
+            <h2>Document Overview</h2>
+            <p>YOUR DOCUMENT STATISTICS</p>
           </div>
-          <button
-            onClick={() => navigate("/documents")}
-            className="stat-action"
-          >
-            →
-          </button>
         </div>
 
-        <div className="stat-card glass-card">
-          <div className="stat-icon">⌛</div>
-          <div className="stat-content">
-            <span className="stat-label">Pending Summaries</span>
-            <span className="stat-value">{stats.pendingSummaries}</span>
-          </div>
-          <button
+        <div className="ft-grid-3">
+          <div 
+            className="ft-stat-card ft-card-clickable"
             onClick={() => navigate("/documents")}
-            className="stat-action"
           >
-            →
-          </button>
-        </div>
-
-        <div className="stat-card glass-card">
-          <div className="stat-icon">⏰</div>
-          <div className="stat-content">
-            <span className="stat-label">Upcoming Reminders</span>
-            <span className="stat-value">{stats.upcomingReminders}</span>
+            <span className="ft-stat-label">Total Documents</span>
+            <span className="ft-stat-value">{stats.totalDocuments}</span>
+            <span className="ft-stat-description">All uploaded documents</span>
           </div>
-          <button
+
+          <div 
+            className="ft-stat-card ft-card-clickable"
+            onClick={() => navigate("/documents")}
+          >
+            <span className="ft-stat-label">Pending Summaries</span>
+            <span className="ft-stat-value warning">{stats.pendingSummaries}</span>
+            <span className="ft-stat-description">Documents awaiting AI summary</span>
+          </div>
+
+          <div 
+            className="ft-stat-card ft-card-clickable"
             onClick={() => navigate("/reminders")}
-            className="stat-action"
           >
-            →
-          </button>
+            <span className="ft-stat-label">Upcoming Reminders</span>
+            <span className="ft-stat-value error">{stats.upcomingReminders}</span>
+            <span className="ft-stat-description">Expiring within 30 days</span>
+          </div>
         </div>
       </div>
 
-      {/* Recent Documents */}
-      <div className="recent-section">
-        <h2>Recent Documents</h2>
+      {/* Section 2: Recent Documents */}
+      <div className="ft-section">
+        <div className="section-header">
+          <div className="section-badge">2</div>
+          <div className="section-content">
+            <h2>Recent Documents</h2>
+            <p>RECENTLY UPDATED</p>
+          </div>
+        </div>
+
         {recentDocs.length === 0 ? (
-          <div className="empty-recent">
-            <p>No documents yet. Start by uploading your first document!</p>
+          <div className="ft-empty-state">
+            <div className="ft-empty-icon">📄</div>
+            <h3 className="ft-empty-title">No documents yet</h3>
+            <p className="ft-empty-description">
+              Start by uploading your first document to get started with tracking
+            </p>
             <button
               onClick={() => navigate("/upload")}
-              className="btn btn-primary"
+              className="ft-btn ft-btn-primary"
             >
-              ↑ Upload Document
+              + Upload Your First Document
             </button>
           </div>
         ) : (
-          <div className="recent-list glass-card">
-            {recentDocs.map((doc) => (
-              <div
-                key={doc._id}
-                className="recent-item"
-                onClick={() => navigate(`/documents/${doc._id}`)}
-              >
-                <div className="recent-icon">◻</div>
-                <div className="recent-info">
-                  <div className="recent-title">{doc.title}</div>
-                  <div className="recent-meta">
-                    <span className="recent-category">{doc.category}</span>
-                    <span className="recent-status">{doc.status}</span>
-                  </div>
-                </div>
-                <span className="recent-arrow">→</span>
-              </div>
-            ))}
+          <div className="ft-card">
+            <table className="ft-table">
+              <thead>
+                <tr>
+                  <th>Document</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Updated</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentDocs.map((doc) => (
+                  <tr 
+                    key={doc._id}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => navigate(`/documents/${doc._id}`)}
+                  >
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div className="section-icon">📄</div>
+                        <div>
+                          <div style={{ fontWeight: 500 }}>{doc.title}</div>
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                            {doc.fileType?.toUpperCase() || 'PDF'}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span className="ft-badge ft-badge-info">{doc.category}</span>
+                    </td>
+                    <td>{getStatusBadge(doc.status)}</td>
+                    <td style={{ color: 'var(--text-tertiary)' }}>
+                      {new Date(doc.updatedAt || doc.createdAt).toLocaleDateString()}
+                    </td>
+                    <td>
+                      <button className="ft-btn ft-btn-secondary" style={{ padding: '8px 12px' }}>
+                        View →
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
 
-      {/* Quick Actions */}
-      <div className="quick-actions">
-        <h2>Quick Actions</h2>
-        <div className="actions-grid">
-          <button
+      {/* Section 3: Quick Actions */}
+      <div className="ft-section">
+        <div className="section-header">
+          <div className="section-badge success">3</div>
+          <div className="section-content">
+            <h2>Quick Actions</h2>
+            <p>GET STARTED</p>
+          </div>
+        </div>
+
+        <div className="ft-grid-3">
+          <div
+            className="ft-card ft-card-clickable"
             onClick={() => navigate("/documents")}
-            className="action-card glass-card"
           >
-            <div className="action-icon-wrapper">
-              <span className="action-icon">≡</span>
+            <div className="ft-card-body" style={{ textAlign: 'center', padding: '32px 24px' }}>
+              <div className="section-icon" style={{ margin: '0 auto 16px', background: 'var(--primary-blue-bg)', color: 'var(--primary-blue)' }}>
+                📋
+              </div>
+              <h3 style={{ marginBottom: '8px', fontSize: '16px' }}>View All Documents</h3>
+              <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-tertiary)' }}>
+                Browse and manage your complete document library
+              </p>
             </div>
-            <span className="action-label">View All Documents</span>
-          </button>
-          <button
+          </div>
+
+          <div
+            className="ft-card ft-card-clickable"
             onClick={() => navigate("/upload")}
-            className="action-card glass-card"
           >
-            <div className="action-icon-wrapper">
-              <span className="action-icon">↑</span>
+            <div className="ft-card-body" style={{ textAlign: 'center', padding: '32px 24px' }}>
+              <div className="section-icon" style={{ margin: '0 auto 16px', background: 'var(--success-green-bg)', color: 'var(--success-green)' }}>
+                ⬆️
+              </div>
+              <h3 style={{ marginBottom: '8px', fontSize: '16px' }}>Upload Document</h3>
+              <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-tertiary)' }}>
+                Add new documents with AI-powered summarization
+              </p>
             </div>
-            <span className="action-label">Upload Document</span>
-          </button>
-          <button
+          </div>
+
+          <div
+            className="ft-card ft-card-clickable"
             onClick={() => navigate("/reminders")}
-            className="action-card glass-card"
           >
-            <div className="action-icon-wrapper">
-              <span className="action-icon">⏱</span>
+            <div className="ft-card-body" style={{ textAlign: 'center', padding: '32px 24px' }}>
+              <div className="section-icon" style={{ margin: '0 auto 16px', background: 'var(--warning-orange-bg)', color: 'var(--warning-orange)' }}>
+                ⏰
+              </div>
+              <h3 style={{ marginBottom: '8px', fontSize: '16px' }}>View Reminders</h3>
+              <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-tertiary)' }}>
+                Track expiry dates and upcoming renewals
+              </p>
             </div>
-            <span className="action-label">View Reminders</span>
-          </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Tips Section */}
+      <div className="ft-info-box info" style={{ marginTop: '24px' }}>
+        <span className="ft-info-box-icon">💡</span>
+        <div>
+          <strong>Pro Tip:</strong> Upload your documents to automatically generate AI summaries and set up expiry reminders to never miss important deadlines.
         </div>
       </div>
     </div>
