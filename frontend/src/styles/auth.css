@@ -105,7 +105,17 @@
   font-size: 14px;
   font-family: inherit;
   transition: all 0.3s ease;
-  background-color: #f9f9f9;
+  background-color: #1a1f3a;
+  color: #ffffff;
+}
+
+.form-group input::placeholder {
+  color: #aaaaaa;
+}
+
+.form-group input::selection {
+  background-color: #4a5568;
+  color: #ffffff;
 }
 
 .form-group input:focus {
