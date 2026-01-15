@@ -99,7 +99,7 @@ app.get("/api/debug/document/:id", async (req, res) => {
       fileUrl: doc.fileUrl || "NOT SET",
       hasFileUrl: !!doc.fileUrl,
       fileUrlType: typeof doc.fileUrl,
-      allFields: Object.keys(doc.toObject())
+      allFields: Object.keys(doc.toObject()),
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

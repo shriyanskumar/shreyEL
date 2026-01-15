@@ -3,10 +3,10 @@
  * Handles document CRUD operations and file management
  */
 
-const Document = require('../models/Document');
-const Reminder = require('../models/Reminder');
-const AIService = require('../utils/aiService');
-const logger = require('../utils/logger');
+const Document = require("../models/Document");
+const Reminder = require("../models/Reminder");
+const AIService = require("../utils/aiService");
+const logger = require("../utils/logger");
 
 /**
  * Get all documents for the current user
@@ -27,7 +27,7 @@ exports.getAllDocuments = async (req, res) => {
 
     // Fetch documents
     const documents = await Document.find(filter)
-      .populate('categoryId')
+      .populate("categoryId")
       .skip(skip)
       .limit(parseInt(limit))
       .sort({ uploadedAt: -1 });
@@ -38,11 +38,11 @@ exports.getAllDocuments = async (req, res) => {
       documents,
       total,
       page: parseInt(page),
-      pages: Math.ceil(total / limit)
+      pages: Math.ceil(total / limit),
     });
   } catch (error) {
-    logger.error('Get All Documents Error:', error.message);
-    res.status(500).json({ error: 'Failed to retrieve documents' });
+    logger.error("Get All Documents Error:", error.message);
+    res.status(500).json({ error: "Failed to retrieve documents" });
   }
 };
 
@@ -55,22 +55,24 @@ exports.getDocumentById = async (req, res) => {
     const { id } = req.params;
 
     const document = await Document.findById(id)
-      .populate('owner', 'username email firstName lastName')
-      .populate('categoryId');
+      .populate("owner", "username email firstName lastName")
+      .populate("categoryId");
 
     if (!document) {
-      return res.status(404).json({ error: 'Document not found' });
+      return res.status(404).json({ error: "Document not found" });
     }
 
     // Check authorization
     if (document.owner._id.toString() !== req.user.id) {
-      return res.status(403).json({ error: 'Not authorized to view this document' });
+      return res
+        .status(403)
+        .json({ error: "Not authorized to view this document" });
     }
 
     res.status(200).json(document);
   } catch (error) {
-    logger.error('Get Document Error:', error.message);
-    res.status(500).json({ error: 'Failed to retrieve document' });
+    logger.error("Get Document Error:", error.message);
+    res.status(500).json({ error: "Failed to retrieve document" });
   }
 };
 
@@ -80,29 +82,30 @@ exports.getDocumentById = async (req, res) => {
  */
 exports.createDocument = async (req, res) => {
   try {
-    const { title, description, category, categoryId, expiryDate, fileUrl } = req.body;
+    const { title, description, category, categoryId, expiryDate, fileUrl } =
+      req.body;
 
-    logger.info(`Creating document - fileUrl received: ${fileUrl || 'NONE'}`);
+    logger.info(`Creating document - fileUrl received: ${fileUrl || "NONE"}`);
 
     // Validate required fields
-    if (!title || title.trim() === '') {
-      return res.status(400).json({ error: 'Document title is required' });
+    if (!title || title.trim() === "") {
+      return res.status(400).json({ error: "Document title is required" });
     }
 
     // Create document
     const document = new Document({
       title: title.trim(),
-      description: description || '',
-      category: category || 'other',
+      description: description || "",
+      category: category || "other",
       categoryId: categoryId || null,
       owner: req.user.id,
       expiryDate: expiryDate ? new Date(expiryDate) : null,
-      fileUrl: fileUrl || '',
-      fileName: fileUrl ? fileUrl.split('/').pop() : `document-${Date.now()}`,
+      fileUrl: fileUrl || "",
+      fileName: fileUrl ? fileUrl.split("/").pop() : `document-${Date.now()}`,
       fileSize: 0,
-      mimeType: 'application/octet-stream',
-      status: 'submitted',
-      uploadedAt: new Date()
+      mimeType: "application/octet-stream",
+      status: "submitted",
+      uploadedAt: new Date(),
     });
 
     logger.info(`Document object fileUrl: ${document.fileUrl}`);
@@ -110,7 +113,7 @@ exports.createDocument = async (req, res) => {
     // If categoryId was provided, try to fetch category name for convenience
     if (categoryId) {
       try {
-        const Category = require('../models/Category');
+        const Category = require("../models/Category");
         const cat = await Category.findById(categoryId);
         if (cat) {
           document.category = cat.name;
@@ -132,10 +135,10 @@ exports.createDocument = async (req, res) => {
         const reminder = new Reminder({
           document: document._id,
           user: req.user.id,
-          reminderType: 'expiry',
+          reminderType: "expiry",
           reminderDate,
           daysBeforeExpiry: 30,
-          notificationMethod: 'both'
+          notificationMethod: "both",
         });
         await reminder.save();
         logger.info(`Reminder created for document: ${document._id}`);
@@ -145,16 +148,18 @@ exports.createDocument = async (req, res) => {
     }
 
     res.status(201).json({
-      message: 'Document created successfully',
+      message: "Document created successfully",
       _id: document._id,
       title: document.title,
       category: document.category,
       status: document.status,
-      expiryDate: document.expiryDate
+      expiryDate: document.expiryDate,
     });
   } catch (error) {
-    logger.error('Create Document Error:', error.message);
-    res.status(500).json({ error: error.message || 'Failed to create document' });
+    logger.error("Create Document Error:", error.message);
+    res
+      .status(500)
+      .json({ error: error.message || "Failed to create document" });
   }
 };
 
@@ -165,16 +170,19 @@ exports.createDocument = async (req, res) => {
 exports.updateDocument = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, status, expiryDate, category, categoryId } = req.body;
+    const { title, description, status, expiryDate, category, categoryId } =
+      req.body;
 
     const document = await Document.findById(id);
     if (!document) {
-      return res.status(404).json({ error: 'Document not found' });
+      return res.status(404).json({ error: "Document not found" });
     }
 
     // Check authorization
     if (document.owner.toString() !== req.user.id) {
-      return res.status(403).json({ error: 'Not authorized to update this document' });
+      return res
+        .status(403)
+        .json({ error: "Not authorized to update this document" });
     }
 
     // Update fields
@@ -185,7 +193,7 @@ exports.updateDocument = async (req, res) => {
     if (categoryId) {
       document.categoryId = categoryId;
       try {
-        const Category = require('../models/Category');
+        const Category = require("../models/Category");
         const cat = await Category.findById(categoryId);
         if (cat) document.category = cat.name;
       } catch (catErr) {
@@ -199,12 +207,12 @@ exports.updateDocument = async (req, res) => {
     logger.info(`Document updated: ${id}`);
 
     res.status(200).json({
-      message: 'Document updated successfully',
-      document
+      message: "Document updated successfully",
+      document,
     });
   } catch (error) {
-    logger.error('Update Document Error:', error.message);
-    res.status(500).json({ error: 'Failed to update document' });
+    logger.error("Update Document Error:", error.message);
+    res.status(500).json({ error: "Failed to update document" });
   }
 };
 
@@ -218,12 +226,14 @@ exports.deleteDocument = async (req, res) => {
 
     const document = await Document.findById(id);
     if (!document) {
-      return res.status(404).json({ error: 'Document not found' });
+      return res.status(404).json({ error: "Document not found" });
     }
 
     // Check authorization
     if (document.owner.toString() !== req.user.id) {
-      return res.status(403).json({ error: 'Not authorized to delete this document' });
+      return res
+        .status(403)
+        .json({ error: "Not authorized to delete this document" });
     }
 
     // Delete associated reminders
@@ -233,10 +243,10 @@ exports.deleteDocument = async (req, res) => {
     await Document.findByIdAndDelete(id);
     logger.info(`Document deleted: ${id}`);
 
-    res.status(200).json({ message: 'Document deleted successfully' });
+    res.status(200).json({ message: "Document deleted successfully" });
   } catch (error) {
-    logger.error('Delete Document Error:', error.message);
-    res.status(500).json({ error: 'Failed to delete document' });
+    logger.error("Delete Document Error:", error.message);
+    res.status(500).json({ error: "Failed to delete document" });
   }
 };
 
@@ -250,29 +260,38 @@ exports.getDocumentSummary = async (req, res) => {
 
     const document = await Document.findById(id);
     if (!document) {
-      return res.status(404).json({ error: 'Document not found' });
+      return res.status(404).json({ error: "Document not found" });
     }
 
     // Check authorization
     if (document.owner.toString() !== req.user.id) {
-      return res.status(403).json({ error: 'Not authorized to view this document' });
+      return res
+        .status(403)
+        .json({ error: "Not authorized to view this document" });
     }
 
     logger.info(`Fetching summary for document: ${id}`);
 
     // Mock content for demo (in production, extract from file)
-    const mockContent = `${document.title}. ${document.description || 'No description provided.'} Category: ${document.category}`;
+    const mockContent = `${document.title}. ${
+      document.description || "No description provided."
+    } Category: ${document.category}`;
 
     // Call AI service
-    const summary = await AIService.generateSummary(mockContent, document.category);
+    const summary = await AIService.generateSummary(
+      mockContent,
+      document.category
+    );
 
     res.status(200).json({
       documentId: id,
       documentTitle: document.title,
-      ...summary
+      ...summary,
     });
   } catch (error) {
-    logger.error('Get Document Summary Error:', error.message);
-    res.status(500).json({ error: error.message || 'Failed to generate document summary' });
+    logger.error("Get Document Summary Error:", error.message);
+    res
+      .status(500)
+      .json({ error: error.message || "Failed to generate document summary" });
   }
 };
