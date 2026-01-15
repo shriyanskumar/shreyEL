@@ -163,6 +163,9 @@ const DocumentUpload = () => {
       if (formData.categoryId) payload.categoryId = formData.categoryId;
       else payload.category = formData.category;
 
+      console.log("Sending payload to backend:", payload);
+      console.log("fileUrl being sent:", payload.fileUrl);
+
       const response = await api.post("/api/documents", payload);
 
       setUploadProgress(100);
