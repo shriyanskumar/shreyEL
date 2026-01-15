@@ -9,52 +9,27 @@ dotenv.config();
 
 const app = express();
 
-// Get allowed origins from environment or use defaults
-const getAllowedOrigins = () => {
-  const origins = [
+// CORS Configuration - Allow frontend origins
+const corsOptions = {
+  origin: [
     "http://localhost:3000",
     "http://localhost:3001",
     "http://localhost:3002",
-    "http://localhost:3003",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:3001",
-  ];
-
-  // Add production URLs from environment variable
-  if (process.env.FRONTEND_URL) {
-    origins.push(process.env.FRONTEND_URL);
-  }
-
-  // Add CORS_ORIGIN from environment variable (can be comma-separated)
-  if (process.env.CORS_ORIGIN) {
-    const additionalOrigins = process.env.CORS_ORIGIN.split(",").map((o) =>
-      o.trim()
-    );
-    origins.push(...additionalOrigins);
-  }
-
-  return origins;
+    "https://document-tracker-el.vercel.app",
+    process.env.FRONTEND_URL,
+    process.env.CORS_ORIGIN
+  ].filter(Boolean),
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
 };
 
 // Middleware
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      const allowedOrigins = getAllowedOrigins();
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        // In production, log unauthorized origins for debugging
-        console.log(`Blocked origin: ${origin}`);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  })
-);
+app.use(cors(corsOptions));
+
+// Handle preflight requests
+app.options("*", cors(corsOptions));
+
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
