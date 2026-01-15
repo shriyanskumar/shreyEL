@@ -32,10 +32,25 @@ exports.generateSummary = async (req, res) => {
       return res.status(403).json({ error: 'Not authorized to summarize this document' });
     }
 
+    // Check if summary already exists
+    const existingSummary = await Summary.findOne({ document: documentId });
+    if (existingSummary) {
+      // Delete existing summary to regenerate
+      await Summary.findByIdAndDelete(existingSummary._id);
+    }
+
     logger.info(`Generating summary for document: ${documentId}`);
 
-    // Call AI module to generate summary
-    const aiResult = await AIService.generateSummary(document.fileUrl || '', document.category);
+    // Build content from available document fields
+    const contentParts = [];
+    if (document.title) contentParts.push(`Title: ${document.title}`);
+    if (document.description) contentParts.push(`Description: ${document.description}`);
+    if (document.fileUrl) contentParts.push(document.fileUrl);
+    
+    const content = contentParts.join('\n') || 'Document uploaded for tracking';
+
+    // Call AI service to generate summary
+    const aiResult = await AIService.generateSummary(content, document.category || 'other');
 
     // Save summary to database
     const summary = new Summary({
