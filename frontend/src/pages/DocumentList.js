@@ -37,6 +37,7 @@ const DocumentList = () => {
     } else {
       setFilteredDocuments([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [documents, filters, searchTerm, sortBy]);
 
   useEffect(() => {
