@@ -30,18 +30,39 @@ def download_file(url: str) -> Optional[bytes]:
         return None
 
 
-def get_file_extension(url: str) -> str:
-    """Get file extension from URL"""
+def get_file_extension(url: str, content_type: str = "") -> str:
+    """Get file extension from URL or content-type"""
     parsed = urlparse(url)
     path = parsed.path.lower()
     
+    # Check URL path
     if '.pdf' in path:
         return 'pdf'
     elif any(ext in path for ext in ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp']):
         return 'image'
-    else:
-        # Try to detect from content-type header
-        return 'unknown'
+    
+    # Check content-type if provided
+    if 'pdf' in content_type.lower():
+        return 'pdf'
+    elif 'image' in content_type.lower():
+        return 'image'
+    
+    # For Cloudinary and other URLs without extension, try both
+    return 'unknown'
+
+
+def download_file_with_type(url: str) -> tuple:
+    """Download file and return (bytes, content_type)"""
+    try:
+        print(f"Downloading file from: {url}")
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+        content_type = response.headers.get('Content-Type', '')
+        print(f"Downloaded {len(response.content)} bytes, Content-Type: {content_type}")
+        return response.content, content_type
+    except Exception as e:
+        print(f"Download error: {str(e)}")
+        return None, ""
 
 
 def extract_text_from_pdf(file_bytes: bytes) -> str:
@@ -106,25 +127,33 @@ def extract_text_from_document(file_url: str) -> str:
     Supports PDFs and images
     """
     if not file_url:
+        print("No file URL provided")
         return ""
     
-    # Download the file
-    file_bytes = download_file(file_url)
+    # Download the file with content-type detection
+    file_bytes, content_type = download_file_with_type(file_url)
     if not file_bytes:
+        print("Failed to download file")
         return ""
     
-    # Detect file type
-    file_type = get_file_extension(file_url)
-    print(f"Detected file type: {file_type}")
+    # Detect file type from URL and content-type
+    file_type = get_file_extension(file_url, content_type)
+    print(f"Detected file type: {file_type} (Content-Type: {content_type})")
     
     # Extract text based on type
-    if file_type == 'pdf':
-        return extract_text_from_pdf(file_bytes)
-    elif file_type == 'image':
-        return extract_text_from_image_ocr_api(file_bytes)
-    else:
-        # Try PDF first, then image OCR
+    if file_type == 'pdf' or 'pdf' in content_type.lower():
         text = extract_text_from_pdf(file_bytes)
-        if not text:
-            text = extract_text_from_image_ocr_api(file_bytes)
+        if text:
+            return text
+    
+    if file_type == 'image' or 'image' in content_type.lower():
+        return extract_text_from_image_ocr_api(file_bytes)
+    
+    # Unknown type - try PDF first, then image OCR
+    print("Unknown file type, trying PDF extraction...")
+    text = extract_text_from_pdf(file_bytes)
+    if text:
         return text
+    
+    print("PDF extraction failed, trying OCR...")
+    return extract_text_from_image_ocr_api(file_bytes)
