@@ -82,6 +82,8 @@ exports.createDocument = async (req, res) => {
   try {
     const { title, description, category, categoryId, expiryDate, fileUrl } = req.body;
 
+    logger.info(`Creating document - fileUrl received: ${fileUrl || 'NONE'}`);
+
     // Validate required fields
     if (!title || title.trim() === '') {
       return res.status(400).json({ error: 'Document title is required' });
@@ -95,13 +97,15 @@ exports.createDocument = async (req, res) => {
       categoryId: categoryId || null,
       owner: req.user.id,
       expiryDate: expiryDate ? new Date(expiryDate) : null,
-      fileUrl: fileUrl || `documents/${Date.now()}`,
-      fileName: fileUrl || `document-${Date.now()}`,
+      fileUrl: fileUrl || '',
+      fileName: fileUrl ? fileUrl.split('/').pop() : `document-${Date.now()}`,
       fileSize: 0,
       mimeType: 'application/octet-stream',
       status: 'submitted',
       uploadedAt: new Date()
     });
+
+    logger.info(`Document object fileUrl: ${document.fileUrl}`);
 
     // If categoryId was provided, try to fetch category name for convenience
     if (categoryId) {
