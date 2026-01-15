@@ -19,28 +19,38 @@ class AIService {
   static async generateSummary(content, category = "other") {
     try {
       logger.info(`Calling AI service at: ${AI_SERVICE_URL}/api/summarize`);
-      
+
       const response = await axios.post(
         `${AI_SERVICE_URL}/api/summarize`,
         { content, category },
-        { 
+        {
           timeout: 60000,
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         }
       );
-      
+
       logger.info("AI summary generated successfully");
       return response.data;
     } catch (error) {
       logger.error("AI Service - Generate Summary Error:", error.message);
-      
+      if (error.response) {
+        logger.error(
+          "AI Service Response Error:",
+          error.response.status,
+          error.response.data
+        );
+      }
+
       // Return fallback if AI service fails
       return {
         summary: `This ${category} document has been uploaded for tracking.`,
-        key_points: ["Document stored successfully", "Review contents as needed"],
+        key_points: [
+          "Document stored successfully",
+          "Review contents as needed",
+        ],
         suggested_actions: ["Review document", "Set reminders for key dates"],
         readability_score: 75,
-        importance: "medium"
+        importance: "medium",
       };
     }
   }
