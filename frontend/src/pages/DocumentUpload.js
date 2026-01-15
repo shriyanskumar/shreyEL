@@ -125,28 +125,46 @@ const DocumentUpload = () => {
     setUploadProgress(0);
 
     try {
-      const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 90) {
-            clearInterval(progressInterval);
-            return 90;
+      let fileUrl = "";
+
+      // Upload file to Cloudinary (free tier)
+      if (formData.file) {
+        setUploadProgress(10);
+        const cloudinaryData = new FormData();
+        cloudinaryData.append("file", formData.file);
+        cloudinaryData.append("upload_preset", "doc_tracker"); // Create this preset in Cloudinary
+        cloudinaryData.append("cloud_name", "democloud"); // Replace with your cloud name
+
+        const cloudinaryResponse = await fetch(
+          "https://api.cloudinary.com/v1_1/democloud/auto/upload", // Replace democloud
+          {
+            method: "POST",
+            body: cloudinaryData,
           }
-          return prev + Math.random() * 20;
-        });
-      }, 200);
+        );
+
+        if (cloudinaryResponse.ok) {
+          const cloudinaryResult = await cloudinaryResponse.json();
+          fileUrl = cloudinaryResult.secure_url;
+          console.log("File uploaded to Cloudinary:", fileUrl);
+        } else {
+          console.warn("Cloudinary upload failed, using filename only");
+          fileUrl = formData.file?.name || "";
+        }
+        setUploadProgress(50);
+      }
 
       const payload = {
         title: formData.title,
         description: formData.description,
         expiryDate: formData.expiryDate || undefined,
-        fileUrl: formData.file?.name || `documents/${Date.now()}`,
+        fileUrl: fileUrl || formData.file?.name || `documents/${Date.now()}`,
       };
       if (formData.categoryId) payload.categoryId = formData.categoryId;
       else payload.category = formData.category;
 
       const response = await api.post("/api/documents", payload);
 
-      clearInterval(progressInterval);
       setUploadProgress(100);
 
       setSuccessMessage("Document uploaded successfully! Redirecting...");
