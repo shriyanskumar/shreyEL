@@ -1,6 +1,6 @@
 """
 AI Module Flask Server
-Provides API endpoints for document summarization using OpenAI
+Provides API endpoints for document summarization using Groq (FREE)
 """
 
 from flask import Flask, request, jsonify
@@ -31,7 +31,7 @@ def health():
         "status": "OK",
         "service": "Document AI Module",
         "version": "2.0.0",
-        "ai_enabled": bool(os.getenv("OPENAI_API_KEY"))
+        "ai_enabled": bool(os.getenv("GROQ_API_KEY"))
     }), 200
 
 @app.route("/api/summarize", methods=["POST"])

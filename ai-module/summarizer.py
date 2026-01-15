@@ -1,38 +1,32 @@
 """
 Document Summarization Module - AI Powered
-Uses OpenAI API for intelligent document analysis
+Uses Groq API (FREE) for intelligent document analysis
 """
 
 import os
 import re
 import json
-from openai import OpenAI
+from groq import Groq
 from typing import Dict
 
-# Configure OpenAI
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# Configure Groq (FREE API)
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
-def get_openai_client():
-    """Get OpenAI client"""
-    if OPENAI_API_KEY:
-        return OpenAI(api_key=OPENAI_API_KEY)
+def get_groq_client():
+    """Get Groq client"""
+    if GROQ_API_KEY:
+        return Groq(api_key=GROQ_API_KEY)
     return None
 
 
 def process_document(content: str, category: str = "other") -> Dict:
     """
-    Process document using OpenAI GPT
-    
-    Args:
-        content: Document text content
-        category: Document category
-        
-    Returns:
-        Dictionary with AI-generated summary, key points, actions, and scores
+    Process document using Groq (FREE Llama model)
     """
     
-    client = get_openai_client()
+    client = get_groq_client()
     if not client:
+        print("No GROQ_API_KEY found, using fallback")
         return fallback_process(content, category)
     
     try:
@@ -40,7 +34,7 @@ def process_document(content: str, category: str = "other") -> Dict:
 
 Document Category: {category}
 Document Content:
-{content[:8000]}
+{content[:6000]}
 
 Respond with a JSON object in this exact format:
 {{
@@ -54,7 +48,7 @@ Respond with a JSON object in this exact format:
 Only respond with valid JSON, no other text."""
 
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="llama-3.1-8b-instant",
             messages=[
                 {"role": "system", "content": "You are a document analysis assistant. Always respond with valid JSON only."},
                 {"role": "user", "content": prompt}
@@ -64,18 +58,19 @@ Only respond with valid JSON, no other text."""
         )
         
         result_text = response.choices[0].message.content.strip()
+        print(f"Groq response: {result_text[:200]}")
         
         # Parse JSON response
         parsed = parse_json_response(result_text, category)
         return parsed
         
     except Exception as e:
-        print(f"OpenAI API error: {str(e)}")
+        print(f"Groq API error: {str(e)}")
         return fallback_process(content, category)
 
 
 def parse_json_response(response_text: str, category: str) -> Dict:
-    """Parse the JSON response from OpenAI"""
+    """Parse the JSON response"""
     
     result = {
         "summary": "",
@@ -114,15 +109,12 @@ def parse_json_response(response_text: str, category: str) -> Dict:
 def fallback_process(content: str, category: str) -> Dict:
     """Fallback processing when AI is not available"""
     
-    # Clean text
     text = re.sub(r"\s+", " ", content).strip()
     sentences = re.split(r"(?<=[.!?])\s+", text)
     clean_sentences = [s.strip() for s in sentences if len(s.split()) >= 5]
     
-    # Generate basic summary
     summary = " ".join(clean_sentences[:3]) if clean_sentences else "Document uploaded for tracking."
     
-    # Category-based actions
     actions_map = {
         "license": ["Check expiration date", "Plan for renewal", "Keep accessible"],
         "certificate": ["Verify authenticity", "Store securely", "Track validity"],
@@ -134,9 +126,9 @@ def fallback_process(content: str, category: str) -> Dict:
     }
     
     return {
-        "summary": summary[:500] if summary else f"This {category} document has been uploaded for tracking and management.",
-        "key_points": clean_sentences[:5] if clean_sentences else ["Document stored for reference", "Review contents as needed"],
-        "suggested_actions": actions_map.get(category, ["Review document", "Set reminders", "Store securely"]),
+        "summary": summary[:500] if summary else f"This {category} document has been uploaded for tracking.",
+        "key_points": clean_sentences[:5] if clean_sentences else ["Document stored for reference"],
+        "suggested_actions": actions_map.get(category, ["Review document", "Set reminders"]),
         "importance": "high" if category in ["license", "insurance", "contract", "identity"] else "medium",
         "readability_score": 75
     }
