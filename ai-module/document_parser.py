@@ -3,7 +3,6 @@ Document Parser Module
 Extracts text from PDFs and images
 """
 
-import os
 import io
 import requests
 from typing import Optional
@@ -16,14 +15,6 @@ try:
 except ImportError:
     PDF_AVAILABLE = False
     print("PyPDF2 not available")
-
-# Image OCR - using free API instead of tesseract
-try:
-    from PIL import Image
-    PIL_AVAILABLE = True
-except ImportError:
-    PIL_AVAILABLE = False
-    print("PIL not available")
 
 
 def download_file(url: str) -> Optional[bytes]:
