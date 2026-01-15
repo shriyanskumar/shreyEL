@@ -1,27 +1,27 @@
 """
 Document Summarization Module - AI Powered
-Uses Google Gemini API for intelligent document analysis
+Uses OpenAI API for intelligent document analysis
 """
 
 import os
 import re
-import google.generativeai as genai
+import json
+from openai import OpenAI
 from typing import Dict
 
-# Configure Gemini
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# Configure OpenAI
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-def configure_gemini():
-    """Configure the Gemini API"""
-    if GEMINI_API_KEY:
-        genai.configure(api_key=GEMINI_API_KEY)
-        return True
-    return False
+def get_openai_client():
+    """Get OpenAI client"""
+    if OPENAI_API_KEY:
+        return OpenAI(api_key=OPENAI_API_KEY)
+    return None
 
 
 def process_document(content: str, category: str = "other") -> Dict:
     """
-    Process document using Google Gemini AI
+    Process document using OpenAI GPT
     
     Args:
         content: Document text content
@@ -31,54 +31,51 @@ def process_document(content: str, category: str = "other") -> Dict:
         Dictionary with AI-generated summary, key points, actions, and scores
     """
     
-    if not configure_gemini():
+    client = get_openai_client()
+    if not client:
         return fallback_process(content, category)
     
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        
         prompt = f"""Analyze this document and provide a structured analysis.
 
 Document Category: {category}
 Document Content:
 {content[:8000]}
 
-Please provide your analysis in EXACTLY this format (use these exact labels):
+Respond with a JSON object in this exact format:
+{{
+    "summary": "A clear 2-3 sentence summary of the document",
+    "key_points": ["Key point 1", "Key point 2", "Key point 3", "Key point 4", "Key point 5"],
+    "suggested_actions": ["Action 1", "Action 2", "Action 3"],
+    "importance": "low or medium or high or critical",
+    "readability_score": 75
+}}
 
-SUMMARY:
-[Write a clear 2-3 sentence summary of the document]
+Only respond with valid JSON, no other text."""
 
-KEY_POINTS:
-- [Key point 1]
-- [Key point 2]
-- [Key point 3]
-- [Key point 4]
-- [Key point 5]
-
-SUGGESTED_ACTIONS:
-- [Action 1]
-- [Action 2]
-- [Action 3]
-
-IMPORTANCE: [low/medium/high/critical]
-
-READABILITY_SCORE: [number between 0-100]
-"""
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a document analysis assistant. Always respond with valid JSON only."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=1000,
+            temperature=0.3
+        )
         
-        response = model.generate_content(prompt)
-        result_text = response.text
+        result_text = response.choices[0].message.content.strip()
         
-        # Parse the response
-        parsed = parse_ai_response(result_text, category)
+        # Parse JSON response
+        parsed = parse_json_response(result_text, category)
         return parsed
         
     except Exception as e:
-        print(f"Gemini API error: {str(e)}")
+        print(f"OpenAI API error: {str(e)}")
         return fallback_process(content, category)
 
 
-def parse_ai_response(response_text: str, category: str) -> Dict:
-    """Parse the AI response into structured data"""
+def parse_json_response(response_text: str, category: str) -> Dict:
+    """Parse the JSON response from OpenAI"""
     
     result = {
         "summary": "",
@@ -89,38 +86,19 @@ def parse_ai_response(response_text: str, category: str) -> Dict:
     }
     
     try:
-        # Extract summary
-        summary_match = re.search(r"SUMMARY:\s*\n(.*?)(?=\n\s*KEY_POINTS:|$)", response_text, re.DOTALL | re.IGNORECASE)
-        if summary_match:
-            result["summary"] = summary_match.group(1).strip()
-        
-        # Extract key points
-        key_points_match = re.search(r"KEY_POINTS:\s*\n(.*?)(?=\n\s*SUGGESTED_ACTIONS:|$)", response_text, re.DOTALL | re.IGNORECASE)
-        if key_points_match:
-            points_text = key_points_match.group(1)
-            points = re.findall(r"[-*]\s*(.+)", points_text)
-            result["key_points"] = [p.strip() for p in points if p.strip()][:5]
-        
-        # Extract suggested actions
-        actions_match = re.search(r"SUGGESTED_ACTIONS:\s*\n(.*?)(?=\n\s*IMPORTANCE:|$)", response_text, re.DOTALL | re.IGNORECASE)
-        if actions_match:
-            actions_text = actions_match.group(1)
-            actions = re.findall(r"[-*]\s*(.+)", actions_text)
-            result["suggested_actions"] = [a.strip() for a in actions if a.strip()][:3]
-        
-        # Extract importance
-        importance_match = re.search(r"IMPORTANCE:\s*(low|medium|high|critical)", response_text, re.IGNORECASE)
-        if importance_match:
-            result["importance"] = importance_match.group(1).lower()
-        
-        # Extract readability score
-        readability_match = re.search(r"READABILITY_SCORE:\s*(\d+)", response_text)
-        if readability_match:
-            score = int(readability_match.group(1))
-            result["readability_score"] = min(100, max(0, score))
+        # Try to extract JSON from response
+        json_match = re.search(r'\{[\s\S]*\}', response_text)
+        if json_match:
+            data = json.loads(json_match.group())
+            
+            result["summary"] = data.get("summary", "")
+            result["key_points"] = data.get("key_points", [])[:5]
+            result["suggested_actions"] = data.get("suggested_actions", [])[:3]
+            result["importance"] = data.get("importance", "medium").lower()
+            result["readability_score"] = min(100, max(0, int(data.get("readability_score", 75))))
             
     except Exception as e:
-        print(f"Parse error: {str(e)}")
+        print(f"JSON parse error: {str(e)}")
     
     # Ensure we have default values
     if not result["summary"]:

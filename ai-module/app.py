@@ -1,6 +1,6 @@
 """
 AI Module Flask Server
-Provides API endpoints for document summarization using Google Gemini
+Provides API endpoints for document summarization using OpenAI
 """
 
 from flask import Flask, request, jsonify
@@ -31,13 +31,13 @@ def health():
         "status": "OK",
         "service": "Document AI Module",
         "version": "2.0.0",
-        "ai_enabled": bool(os.getenv("GEMINI_API_KEY"))
+        "ai_enabled": bool(os.getenv("OPENAI_API_KEY"))
     }), 200
 
 @app.route("/api/summarize", methods=["POST"])
 def summarize():
     """
-    Endpoint to summarize a document using AI
+    Endpoint to summarize a document using OpenAI
     
     Request body:
     {
