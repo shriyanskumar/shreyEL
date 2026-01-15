@@ -37,27 +37,28 @@ def health():
 @app.route("/api/summarize", methods=["POST"])
 def summarize():
     """
-    Endpoint to summarize a document using OpenAI
-    
-    Request body:
-    {
-        "content": "document text",
-        "category": "license" | "certificate" | "permit" | "insurance" | "contract" | "other"
-    }
+    Endpoint to summarize a document using Groq
     """
     try:
         data = request.get_json()
         content = data.get("content", "")
         category = data.get("category", "other")
         
+        print(f"Received request - content length: {len(content)}, category: {category}")
+        print(f"GROQ_API_KEY present: {bool(os.getenv('GROQ_API_KEY'))}")
+        
         if not content:
             return jsonify({"error": "Document content is required"}), 400
         
         result = process_document(content, category)
+        print(f"Result: {result}")
         return jsonify(result), 200
         
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import traceback
+        error_trace = traceback.format_exc()
+        print(f"ERROR: {error_trace}")
+        return jsonify({"error": str(e), "trace": error_trace}), 500
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5001))
