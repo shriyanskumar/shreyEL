@@ -20,11 +20,15 @@ class AIService {
   static async generateSummary(content, category = "other", fileUrl = "") {
     try {
       logger.info(`Calling AI service at: ${AI_SERVICE_URL}/api/summarize`);
-      logger.info(`File URL provided: ${fileUrl ? "Yes" : "No"}`);
+      logger.info(`File URL provided: ${fileUrl ? fileUrl : "NONE"}`);
+      logger.info(`Content: ${content.substring(0, 100)}...`);
+
+      const requestBody = { content, category, fileUrl };
+      logger.info(`Request body fileUrl: ${requestBody.fileUrl || "EMPTY"}`);
 
       const response = await axios.post(
         `${AI_SERVICE_URL}/api/summarize`,
-        { content, category, fileUrl },
+        requestBody,
         {
           timeout: 120000, // 2 minutes for file processing
           headers: { "Content-Type": "application/json" },
