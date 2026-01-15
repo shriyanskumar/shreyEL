@@ -80,7 +80,8 @@ app.get("/api/health", (req, res) => {
     status: "OK",
     timestamp: new Date().toISOString(),
     service: "Document Tracker API",
-    ai_service_url: process.env.AI_SERVICE_URL || "NOT SET - using localhost:5001",
+    ai_service_url:
+      process.env.AI_SERVICE_URL || "NOT SET - using localhost:5001",
   });
 });
 
