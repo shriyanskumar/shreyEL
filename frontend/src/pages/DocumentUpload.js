@@ -147,6 +147,8 @@ const DocumentUpload = () => {
           const cloudinaryResult = await cloudinaryResponse.json();
           fileUrl = cloudinaryResult.secure_url;
           console.log("File uploaded to Cloudinary:", fileUrl);
+          // Ensure formData.fileUrl is set to the Cloudinary URL
+          setFormData((prev) => ({ ...prev, fileUrl }));
         } else {
           const errorText = await cloudinaryResponse.text();
           console.error(
@@ -165,7 +167,7 @@ const DocumentUpload = () => {
         title: formData.title,
         description: formData.description,
         expiryDate: formData.expiryDate || undefined,
-        fileUrl: fileUrl,
+        fileUrl: fileUrl || formData.fileUrl,
       };
       if (formData.categoryId) payload.categoryId = formData.categoryId;
       else payload.category = formData.category;
