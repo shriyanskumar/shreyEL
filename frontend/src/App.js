@@ -36,8 +36,9 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
+  // If not authenticated, always redirect to login
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace state={{ from: window.location.pathname }} />;
   }
 
   return children;

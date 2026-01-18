@@ -26,3 +26,5 @@ ENV/
 .cache/
 .next/
 out/
+.vercel
+.env*.local
